@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Host Registration</title>
+    <style>
+        /* Reset some default browser styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Global styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f7f7f7;
+}
+
+.container {
+    max-width: 500px;
+    margin: 0 auto;
+    background-color: #fff;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    font-size: 24px;
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    font-size: 18px;
+    color: #555;
+    margin-bottom: 5px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    font-size: 16px;
+    background-color: #f9f9f9;
+    color: #333;
+    transition: border-color 0.3s;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="file"]:focus {
+    outline: none;
+    border-color: #007BFF;
+}
+
+button {
+    background-color: #007BFF;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 18px;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+/* Validation error messages */
+.error-message {
+    color: #ff0000;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .container {
+        max-width: 100%;
+        margin: 10px;
+    }
+}
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Host Registration</h2>
+        <form id="registration-form" action="#" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="first-name">First Name:</label>
+                <input type="text" id="first-name" name="first-name" required>
+            </div>
+            <div class="form-group">
+                <label for="last-name">Last Name:</label>
+                <input type="text" id="last-name" name="last-name" required>
+            </div>
+            <div class="form-group">
+                <label for="property-name">Property Name:</label>
+                <input type="text" id="property-name" name="property-name" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <div class="form-group">
+                <label for="confirm-password">Confirm Password:</label>
+                <input type="password" id="confirm-password" name="confirm-password" required>
+            </div>
+            <div class="form-group">
+                <label for="license-upload">License Upload:</label>
+                <input type="file" id="license-upload" name="license-upload" accept=".pdf, .jpg, .png" required>
+            </div>
+            <div class="form-group">
+                <button type="submit">Register</button>
+            </div>
+        </form>
+    </div>
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const form = document.getElementById("registration-form");
+        
+            // Get references to all form fields
+            const firstNameInput = document.getElementById("first-name");
+            const lastNameInput = document.getElementById("last-name");
+            const emailInput = document.getElementById("email");
+            const passwordInput = document.getElementById("password");
+            const confirmPasswordInput = document.getElementById("confirm-password");
+            const licenseUploadInput = document.getElementById("license-upload");
+        
+            // Add real-time validation for the First Name field
+            firstNameInput.addEventListener("input", function() {
+                validateName(firstNameInput);
+            });
+        
+            // Add real-time validation for the Last Name field
+            lastNameInput.addEventListener("input", function() {
+                validateName(lastNameInput);
+            });
+        
+            // Add real-time validation for the Email field
+            emailInput.addEventListener("input", function() {
+                validateEmail(emailInput);
+            });
+        
+            // Add real-time validation for the Password field
+            passwordInput.addEventListener("input", function() {
+                validatePassword(passwordInput);
+            });
+        
+            // Add real-time validation for the Confirm Password field
+            confirmPasswordInput.addEventListener("input", function() {
+                validateConfirmPassword(passwordInput, confirmPasswordInput);
+            });
+        
+            // Add real-time validation for the License Upload field
+            licenseUploadInput.addEventListener("input", function() {
+                validateLicenseUpload(licenseUploadInput);
+            });
+        
+            // Validate the entire form on submission
+            form.addEventListener("submit", function(event) {
+                if (!validateForm()) {
+                    event.preventDefault();
+                }
+            });
+        
+            // Validation functions
+            function validateName(inputField) {
+                const name = inputField.value;
+                const nameRegex = /^[A-Za-z]+$/;
+        
+                if (!nameRegex.test(name)) {
+                    displayErrorMessage(inputField, "Name must contain only letters.");
+                } else {
+                    clearErrorMessage(inputField);
+                }
+            }
+        
+            function validateEmail(inputField) {
+                const email = inputField.value;
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        
+                if (!emailRegex.test(email)) {
+                    displayErrorMessage(inputField, "Invalid email format.");
+                } else {
+                    clearErrorMessage(inputField);
+                }
+            }
+        
+            function validatePassword(inputField) {
+                const password = inputField.value;
+        
+                if (password.length < 8) {
+                    displayErrorMessage(inputField, "Password must be at least 8 characters.");
+                } else {
+                    clearErrorMessage(inputField);
+                }
+            }
+        
+            function validateConfirmPassword(passwordField, confirmPasswordField) {
+                const password = passwordField.value;
+                const confirmPassword = confirmPasswordField.value;
+        
+                if (password !== confirmPassword) {
+                    displayErrorMessage(confirmPasswordField, "Passwords do not match.");
+                } else {
+                    clearErrorMessage(confirmPasswordField);
+                }
+            }
+        
+            function validateLicenseUpload(inputField) {
+                const licenseUpload = inputField.files[0];
+        
+                if (!licenseUpload) {
+                    displayErrorMessage(inputField, "License upload is compulsory.");
+                } else {
+                    clearErrorMessage(inputField);
+                }
+            }
+        
+            function validateForm() {
+                const validationFields = [
+                    firstNameInput,
+                    lastNameInput,
+                    emailInput,
+                    passwordInput,
+                    confirmPasswordInput,
+                    licenseUploadInput
+                ];
+        
+                let isValid = true;
+        
+                for (const field of validationFields) {
+                    if (field.getAttribute("data-valid") === "false") {
+                        isValid = false;
+                    }
+                }
+        
+                return isValid;
+            }
+        
+            function displayErrorMessage(inputField, message) {
+                const errorMessage = inputField.nextElementSibling;
+                errorMessage.textContent = message;
+                inputField.setAttribute("data-valid", "false");
+            }
+        
+            function clearErrorMessage(inputField) {
+                const errorMessage = inputField.nextElementSibling;
+                errorMessage.textContent = "";
+                inputField.setAttribute("data-valid", "true");
+            }
+        });
+        
+    </script>
+</body>
+</html>

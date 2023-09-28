@@ -1,0 +1,301 @@
+{% load static%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register on Airbnb</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            /*background-image: url('reg.jpg'); */
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed; /* Keeps the background fixed as the content scrolls */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .registration-container {
+            background-color: rgba(255, 255, 255, 0.9);
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 30px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            width: 400px;
+        }
+
+        .registration-container h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="email"],
+        .form-group input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+
+        .form-group input[type="text"]:focus,
+        .form-group input[type="email"]:focus,
+        .form-group input[type="password"]:focus,
+        .form-group select:focus {
+            border-color: #007bff;
+        }
+
+        
+        .submit-button {
+            width: 100%;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .submit-button:hover {
+            background-color: #0056b3;
+        }
+        /* Add styles for valid and invalid states */
+        .is-valid {
+            border-color: #28a745; /* Green border for valid input */
+        }
+
+        .is-invalid {
+            border-color: #dc3545; /* Red border for invalid input */
+        }
+
+        /* Rest of your CSS styles */
+        /* ... */
+
+    </style>
+</head>
+<body>
+   
+    <div class="registration-container">
+        <h2>Create a StayHub Account</h2>
+        <form action="" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="first_name">First name:</label>
+                <input type="text" id="first_name" name="first_name" onkeyup="validateFirst_Name()"  placeholder="Enter your First name" required>
+            </div>
+            <div class="form-group">
+                <label for="last_name">Last Name:</label>
+                <input type="text" id="last_name" name="last_name" onkeyup="validateLast_Name()" placeholder="Enter your last name" required>
+            </div>
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" onkeyup="validateUser_Name()" placeholder="Enter your Username name" required autocomplete="username">
+            </div>
+            <div class="form-group">
+                <label for="email">Email Address:</label>
+                <input type="email" id="email" name="email" onkeyup="validateEmail()" placeholder="Enter your email address" required>
+            </div>
+            <div class="form-group">
+                <label for="phone_number">Phone Number:</label>
+                <input type="tel" id="phone_number" name="phone_number" onkeyup="validatephone_number()" placeholder="Enter your phone_number" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" onkeyup="validatePassword()" placeholder="Choose a password" required>
+            </div>
+            <div class="form-group">
+                <label for="confirmpassword">Confirm Password:</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" onkeyup="validateConfirmPassword()" placeholder="Confirm your password" required>
+            </div>
+            
+            <button type="submit" class="submit-button">Sign Up</button>
+        </form>
+    </div>
+    <script>
+        
+      document.addEventListener("DOMContentLoaded", function() {
+        const first_nameInput = document.getElementById("first_name");
+        const last_nameInput = document.getElementById("last_name");
+        const usernameInput = document.getElementById('username');
+        
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById("password");
+        const confirmPasswordInput = document.getElementById("confirmpassword");
+
+        emailInput.addEventListener('blur', function(event) { validateEmail(); });
+
+        
+        // First Name Validation (on type)
+    first_nameInput.addEventListener("input", function() {
+        console.log("First name input event triggered.");
+        validateName(first_nameInput);
+    });
+
+    // Last Name Validation (on type)
+    last_nameInput.addEventListener("input", function() {
+        console.log("Last name input event triggered.");
+        validateName(last_nameInput);
+    });
+
+    // Function to validate First Name and Last Name
+function validateName(inputElement) {
+const name = inputElement.value.trim();
+
+// Check if the name contains letters or numbers
+const valid = /^[A-Za-z]+$/.test(name);
+
+if (valid) {
+    inputElement.classList.remove('is-invalid');
+    inputElement.classList.add('is-valid');
+} else {
+    inputElement.classList.add('is-invalid');
+    inputElement.classList.remove('is-valid');
+    alert('Name should only contain alphabetic characters.');
+}
+}
+
+
+    //username Validation
+    usernameInput.addEventListener('blur', function(event) { validateUser_Name(); });
+    function validateUser_Name() {
+        const namePattern = /^[A-Za-z0-9!@#$%^&*()_+{}\[\]:;<>,.?~\/\-\\]+$/;
+        if (!namePattern.test(usernameInput.value)) {
+          usernameInput.classList.add('is-invalid');
+          usernameInput.classList.remove('is-valid');
+          return false;
+        } else {
+          usernameInput.classList.remove('is-invalid');
+          usernameInput.classList.add('is-valid');
+          return true;
+        }
+      }
+
+
+        // Email Validation (Basic Format Check)
+        emailInput.addEventListener("input", function() {
+            validateEmail();
+        });
+
+        // Password Validation (At least 8 characters)
+        passwordInput.addEventListener("input", function() {
+            validatePassword();
+        });
+
+        // Confirm Password Validation (Matches Password)
+        confirmPasswordInput.addEventListener("input", function() {
+            validateConfirmPassword();
+        });
+
+        // Function to validate Full Name (Username)
+        function validateFullName() {
+            const fullName = fullNameInput.value.trim();
+
+            // Check if the User Name contains only alphabetic characters and spaces
+            const valid = /^[A-Za-z\s]+$/.test(fullName);
+
+            if (valid) {
+                fullNameInput.setCustomValidity("");
+            } else {
+                fullNameInput.setCustomValidity("Full Name should only contain letters and spaces");
+            }
+        }
+
+        // Function to validate Email (Basic Format Check)
+        function isValidEmail(email) {
+            const validProviders = [
+                "gmail", "yahoo", "outlook", "hotmail", "aol", "icloud", "protonmail", "zoho"
+                
+            ];
+        
+            const validTLDs = [
+                "com", "org", "net", "edu", "gov", "mil", "co", "info", "io", "uk", "in"
+                
+            ];
+        
+            const emailParts = email.split("@");
+            if (emailParts.length !== 2) {
+                return false; 
+            }
+        
+            const provider = emailParts[1].split(".")[0].toLowerCase();
+            const tlds = emailParts[1].split(".").slice(1).map(tld => tld.toLowerCase());
+        
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+$/;
+        
+           
+            if (tlds.some(tld => tld.includes("..")) || tlds.length > 1) {
+                return false;
+            }
+        
+           
+            if (!validTLDs.includes(tlds[0]) || tlds.indexOf(tlds[0]) !== tlds.lastIndexOf(tlds[0])) {
+                return false;
+            }
+        
+            return (
+                emailRegex.test(email) &&
+                validProviders.includes(provider)
+            );
+        }
+        
+        function validateEmail() {
+            const emailInput = document.getElementById('email');
+            if (!isValidEmail(emailInput.value)) {
+                emailInput.classList.add('is-invalid');
+                emailInput.classList.remove('is-valid');
+                return false;
+            } else {
+                emailInput.classList.remove('is-invalid');
+                emailInput.classList.add('is-valid');
+                return true;
+            }
+        }
+        // Function to validate Password (At least 8 characters)
+        function validatePassword() {
+          const password = passwordInput.value;
+          if (password.length < 8) {
+              passwordInput.setCustomValidity("Password must be at least 8 characters");
+          } else {
+              passwordInput.setCustomValidity("");
+          }
+      }
+      
+      function validateConfirmPassword() {
+        if (passwordInput.value !== confirmPasswordInput.value) {
+            confirmPasswordInput.classList.add('is-invalid');
+            confirmPasswordInput.classList.remove('is-valid');
+            return false;
+        } else {
+            confirmPasswordInput.classList.remove('is-invalid');
+            confirmPasswordInput.classList.add('is-valid');
+            return true;
+        }
+    }
+    
+    });
+
+     </script>
+</body>
+</html>
