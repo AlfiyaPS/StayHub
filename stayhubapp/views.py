@@ -1,4 +1,5 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.contrib.auth import login
 
 # Create your views here.
 def index(request):
@@ -9,3 +10,4 @@ def registration(request):
     return render(request,'registration.html',)
 def registerproperty(request):
     return render(request,'registerproperty.html',)
+

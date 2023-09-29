@@ -134,71 +134,69 @@
         </form>
     </div>
     <script>
-        
-      document.addEventListener("DOMContentLoaded", function() {
+        <script>
+    document.addEventListener("DOMContentLoaded", function() {
         const first_nameInput = document.getElementById("first_name");
         const last_nameInput = document.getElementById("last_name");
         const usernameInput = document.getElementById('username');
-        
         const emailInput = document.getElementById('email');
+        const phoneNumberInput = document.getElementById('phone_number');
         const passwordInput = document.getElementById("password");
-        const confirmPasswordInput = document.getElementById("confirmpassword");
+        const confirmPasswordInput = document.getElementById("confirmPassword");
 
         emailInput.addEventListener('blur', function(event) { validateEmail(); });
 
-        
-        // First Name Validation (on type)
-    first_nameInput.addEventListener("input", function() {
-        console.log("First name input event triggered.");
-        validateName(first_nameInput);
-    });
+        // First Name and Last Name Validation (on type)
+        first_nameInput.addEventListener("input", function() {
+            console.log("First name input event triggered.");
+            validateName(first_nameInput);
+        });
 
-    // Last Name Validation (on type)
-    last_nameInput.addEventListener("input", function() {
-        console.log("Last name input event triggered.");
-        validateName(last_nameInput);
-    });
+        last_nameInput.addEventListener("input", function() {
+            console.log("Last name input event triggered.");
+            validateName(last_nameInput);
+        });
 
-    // Function to validate First Name and Last Name
-function validateName(inputElement) {
-const name = inputElement.value.trim();
+        // Function to validate First Name and Last Name
+        function validateName(inputElement) {
+            const name = inputElement.value.trim();
+            const valid = /^[A-Za-z]+$/.test(name);
 
-// Check if the name contains letters or numbers
-const valid = /^[A-Za-z]+$/.test(name);
-
-if (valid) {
-    inputElement.classList.remove('is-invalid');
-    inputElement.classList.add('is-valid');
-} else {
-    inputElement.classList.add('is-invalid');
-    inputElement.classList.remove('is-valid');
-    alert('Name should only contain alphabetic characters.');
-}
-}
-
-
-    //username Validation
-    usernameInput.addEventListener('blur', function(event) { validateUser_Name(); });
-    function validateUser_Name() {
-        const namePattern = /^[A-Za-z0-9!@#$%^&*()_+{}\[\]:;<>,.?~\/\-\\]+$/;
-        if (!namePattern.test(usernameInput.value)) {
-          usernameInput.classList.add('is-invalid');
-          usernameInput.classList.remove('is-valid');
-          return false;
-        } else {
-          usernameInput.classList.remove('is-invalid');
-          usernameInput.classList.add('is-valid');
-          return true;
+            if (valid) {
+                inputElement.classList.remove('is-invalid');
+                inputElement.classList.add('is-valid');
+            } else {
+                inputElement.classList.add('is-invalid');
+                inputElement.classList.remove('is-valid');
+            }
         }
-      }
 
+        // Username Validation
+        usernameInput.addEventListener('blur', function(event) { validateUser_Name(); });
+        function validateUser_Name() {
+            const namePattern = /^[A-Za-z0-9!@#$%^&*()_+{}\[\]:;<>,.?~\/\-\\]+$/;
+            if (!namePattern.test(usernameInput.value)) {
+                usernameInput.classList.add('is-invalid');
+                usernameInput.classList.remove('is-valid');
+                return false;
+            } else {
+                usernameInput.classList.remove('is-invalid');
+                usernameInput.classList.add('is-valid');
+                return true;
+            }
+        }
 
         // Email Validation (Basic Format Check)
         emailInput.addEventListener("input", function() {
             validateEmail();
         });
 
-        // Password Validation (At least 8 characters)
+        // Phone Number Validation
+        phoneNumberInput.addEventListener("input", function() {
+            validatePhoneNumber();
+        });
+
+        // Password Validation (At least 8 characters and special characters)
         passwordInput.addEventListener("input", function() {
             validatePassword();
         });
@@ -208,17 +206,17 @@ if (valid) {
             validateConfirmPassword();
         });
 
-        // Function to validate Full Name (Username)
-        function validateFullName() {
-            const fullName = fullNameInput.value.trim();
-
-            // Check if the User Name contains only alphabetic characters and spaces
-            const valid = /^[A-Za-z\s]+$/.test(fullName);
+        // Function to validate Phone Number
+        function validatePhoneNumber() {
+            const phoneNumber = phoneNumberInput.value.trim();
+            const valid = /^[0-9]{10}$/.test(phoneNumber); // Assuming a 10-digit phone number format
 
             if (valid) {
-                fullNameInput.setCustomValidity("");
+                phoneNumberInput.classList.remove('is-invalid');
+                phoneNumberInput.classList.add('is-valid');
             } else {
-                fullNameInput.setCustomValidity("Full Name should only contain letters and spaces");
+                phoneNumberInput.classList.add('is-invalid');
+                phoneNumberInput.classList.remove('is-valid');
             }
         }
 
@@ -226,75 +224,61 @@ if (valid) {
         function isValidEmail(email) {
             const validProviders = [
                 "gmail", "yahoo", "outlook", "hotmail", "aol", "icloud", "protonmail", "zoho"
-                
             ];
-        
+
             const validTLDs = [
                 "com", "org", "net", "edu", "gov", "mil", "co", "info", "io", "uk", "in"
-                
             ];
-        
+
             const emailParts = email.split("@");
             if (emailParts.length !== 2) {
-                return false; 
+                return false;
             }
-        
+
             const provider = emailParts[1].split(".")[0].toLowerCase();
             const tlds = emailParts[1].split(".").slice(1).map(tld => tld.toLowerCase());
-        
             const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+$/;
-        
-           
+
             if (tlds.some(tld => tld.includes("..")) || tlds.length > 1) {
                 return false;
             }
-        
-           
+
             if (!validTLDs.includes(tlds[0]) || tlds.indexOf(tlds[0]) !== tlds.lastIndexOf(tlds[0])) {
                 return false;
             }
-        
+
             return (
                 emailRegex.test(email) &&
                 validProviders.includes(provider)
             );
         }
-        
-        function validateEmail() {
-            const emailInput = document.getElementById('email');
-            if (!isValidEmail(emailInput.value)) {
-                emailInput.classList.add('is-invalid');
-                emailInput.classList.remove('is-valid');
+
+        // Function to validate Password (At least 8 characters)
+        function validatePassword() {
+            const password = passwordInput.value;
+            if (password.length < 8) {
+                passwordInput.classList.add('is-invalid');
+                passwordInput.classList.remove('is-valid');
+            } else {
+                passwordInput.classList.remove('is-invalid');
+                passwordInput.classList.add('is-valid');
+            }
+        }
+
+        function validateConfirmPassword() {
+            if (passwordInput.value !== confirmPasswordInput.value) {
+                confirmPasswordInput.classList.add('is-invalid');
+                confirmPasswordInput.classList.remove('is-valid');
                 return false;
             } else {
-                emailInput.classList.remove('is-invalid');
-                emailInput.classList.add('is-valid');
+                confirmPasswordInput.classList.remove('is-invalid');
+                confirmPasswordInput.classList.add('is-valid');
                 return true;
             }
         }
-        // Function to validate Password (At least 8 characters)
-        function validatePassword() {
-          const password = passwordInput.value;
-          if (password.length < 8) {
-              passwordInput.setCustomValidity("Password must be at least 8 characters");
-          } else {
-              passwordInput.setCustomValidity("");
-          }
-      }
-      
-      function validateConfirmPassword() {
-        if (passwordInput.value !== confirmPasswordInput.value) {
-            confirmPasswordInput.classList.add('is-invalid');
-            confirmPasswordInput.classList.remove('is-valid');
-            return false;
-        } else {
-            confirmPasswordInput.classList.remove('is-invalid');
-            confirmPasswordInput.classList.add('is-valid');
-            return true;
-        }
-    }
-    
     });
+</script>
+      
 
      </script>
 </body>
