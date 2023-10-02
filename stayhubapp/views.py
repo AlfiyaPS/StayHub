@@ -7,6 +7,8 @@ from django.contrib.auth import get_user_model
 from django.db import IntegrityError
 from django.contrib.auth import authenticate, login as auth_login,logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout
+from django.contrib import auth
 
 # Create your views here.
 
@@ -157,3 +159,9 @@ def host_dashboard(request):
 
 def guest_dashboard(request):
     return render(request,'guest_dashboard.html')
+
+def logout(request):
+    auth.logout(request)
+    return redirect('/')
+def services(request):
+    return render(request, 'inc/services.html')

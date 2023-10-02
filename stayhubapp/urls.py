@@ -9,5 +9,6 @@ urlpatterns = [
     path('host_dashboard/',views.host_dashboard,name="host_dashboard"),
     path('guest_dashboard/',views.guest_dashboard,name="guest_dashboard"),
     path('logout/',views.logout,name="logout"),
+    path('services/', views.services, name='services'),
 
 ]
