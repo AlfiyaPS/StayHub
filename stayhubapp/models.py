@@ -6,10 +6,12 @@ class CustomUser(AbstractUser):
     GUEST = 1
     HOST = 2
     
+    
 
     ROLE_CHOICE = (
      (GUEST, 'guest'),
      (HOST, 'host'),
+     
      
     )
     #username = None

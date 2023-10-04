@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <style>
+	/* Reset some default browser styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Global styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f7f7f7;
+}
+
+.dashboard {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar styles */
+
+.sidebar {
+    width: 250px;
+    background-color: #50C878; /* Updated background color */
+    color: #fff;
+    padding-top: 20px;
+}
+
+/* Rest of your CSS remains the same */
+
+
+.logo {
+    font-size: 24px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.menu {
+    list-style: none;
+    padding: 0;
+}
+
+.menu li {
+    margin-bottom: 10px;
+}
+
+.menu li a {
+    text-decoration: none;
+    color: #fff;
+    display: block;
+    padding: 10px 20px;
+    transition: background-color 0.3s;
+}
+
+.menu li a:hover {
+    background-color: #555;
+}
+
+.menu li a i {
+    margin-right: 10px;
+}
+
+/* Main content styles */
+.content {
+    flex-grow: 1;
+    padding: 20px;
+}
+
+header {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* FontAwesome Icons */
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
+
+	</style>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="logo">
+                Dashboard
+            </div>
+            <ul class="menu">
+                <li><a href="{% url 'admin:index' %}"><i class="fas fa-home"></i>Dashboard</a></li>
+
+                <li><a href="#"><i class="fas fa-chart-bar"></i>View Hosts</a></li>
+                <li><a href="{% url 'logout' %}"><i class="fas fa-cog"></i>Logout</a></li>
+            </ul>
+        </nav>
+        
+        <!-- Main Content -->
+        <div class="content">
+            <header>
+                <h1>Welcome to the Admin Dashboard</h1>
+            </header>
+            <main>
+                <p></p>
+            </main>
+        </div>
+    </div>
+</body>
+</html>

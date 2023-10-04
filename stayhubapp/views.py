@@ -22,16 +22,17 @@ def registration(request):
         last_name=request.POST['last_name']
         username=request.POST['username']
         email=request.POST['email']
-        phone_number=request.POST['phone_number']
+        phone_number=request.POST['phone']
         password=request.POST['password']
-        confirmPassword=request.POST['confirmPassword']
+        confirm_password = request.POST['confirm_password']
+
         if CustomUser.objects.filter(username=username).exists():
             messages.info(request,"Username already exists")
             return redirect('registration')
         elif CustomUser.objects.filter(email=email).exists():
             messages.info(request,"Email already exists")
             return redirect('registration')
-        elif password != confirmPassword:
+        elif password != confirm_password:
             messages.error(request, "Password and confirmation password do not match")
             return redirect('registration')
         else:
@@ -123,12 +124,7 @@ def registerproperty(request):
 
 
 def login(request):
-    if request.user.is_authenticated:
-        if request.user.is_guest:
-            return redirect('guest_dashboard')
-        elif request.user.is_host:
-            return redirect('host_dashboard')
-        
+    
 
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -139,16 +135,19 @@ def login(request):
 
             if user is not None:
                 auth_login(request, user)
-                if user.is_guest:
+                if user.is_staff:
+                    return redirect('admin_dashboard')
+            
+                elif user.is_guest:
                     return redirect('guest_dashboard')
                 elif user.is_host:
                     return redirect('host_dashboard')
                 
-            else:
+        else:
                 error_message = "Invalid login credentials."
                 return render(request, "login.html", {"error_message": error_message})
 
-        else:
+    else:
             error_message = "username and password are required fields."
             return render(request, "login.html", {"error_message": error_message})
 
@@ -165,3 +164,5 @@ def logout(request):
     return redirect('/')
 def services(request):
     return render(request, 'inc/services.html')
+def admin_dashboard(request):
+    return render(request,'admin_dashboard.html')

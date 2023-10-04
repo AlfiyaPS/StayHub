@@ -1,3 +1,6 @@
+
+{% load static %}
+{% block body %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -107,32 +110,40 @@ button:hover {
         <form id="registration-form" action="#" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="form-group">
-                <label for="first_name">First Name:</label>
-                <input type="text" id="first_name" name="first_name" required>
+                <label for="first_name">First name:</label>
+                <input type="text" id="first_name" name="first_name" onkeyup="validateName(this, 'first_name_error')" placeholder="Enter your First name" required>
+                <span id="first_name_error" style="color: red;"></span>
             </div>
             <div class="form-group">
                 <label for="last_name">Last Name:</label>
-                <input type="text" id="last_name" name="last_name" required>
+                <input type="text" id="last_name" name="last_name" onkeyup="validateName(this, 'last_name_error')" placeholder="Enter your last name" required>
+                <span id="last_name_error" style="color: red;"></span>
             </div>
+            
             <div class="form-group">
                 <label for="property_name">Property Name:</label>
                 <input type="text" id="property_name" name="property_name" required>
             </div>
             <div class="form-group">
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" required>
+                <label for="email">Email Address:</label>
+                <input type="text" id="email" name="email" onchange="validateEmail(this.value)">
+                <span id="emailError" style="color: red;"></span>
+                
             </div>
             <div class="form-group">
                 <label for="username">Username:</label>
-                <input type="text" id="username" name="username" required>
+                <input type="text" id="username" name="username" onkeyup="validateUser_Name()" placeholder="Enter your Username name" required autocomplete="username">
             </div>
             <div class="form-group">
                 <label for="password">Password:</label>
-                <input type="password" id="password" name="password" required>
+                <input type="password" id="password" name="password" oninput="validatePassword()" placeholder="Enter your Password">
+    
+                <span id="passwordError" style="color: red;"></span>
             </div>
             <div class="form-group">
                 <label for="confirm_password">Confirm Password:</label>
-                <input type="password" id="confirm_password" name="confirm_password" required>
+                <input type="password" id="confirm_password" name="confirm_password" oninput="validateConfirmPassword()" placeholder="Confirm your password again">
+                <span id="confirmPasswordError" style="color: red;"></span>
             </div>
             <div class="form-group">
                 <label for="license_upload">License Upload:</label>
@@ -145,142 +156,83 @@ button:hover {
     </div>
     <script src="script.js"></script>
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const form = document.getElementById("registration-form");
+        // Function to validate first name (only alphabets)
+        function validateName(inputElement, errorId) {
+            const namePattern = /^[A-Z][a-zA-Z\s]*$/; // First letter capital, alphabetic characters, and spaces
+            const inputValue = inputElement.value.trim();
+            const errorElement = document.getElementById(errorId);
         
-            // Get references to all form fields
-            const firstNameInput = document.getElementById("first-name");
-            const lastNameInput = document.getElementById("last-name");
-            const emailInput = document.getElementById("email");
-            const passwordInput = document.getElementById("password");
-            const confirmPasswordInput = document.getElementById("confirm-password");
-            const licenseUploadInput = document.getElementById("license-upload");
-        
-            // Add real-time validation for the First Name field
-            firstNameInput.addEventListener("input", function() {
-                validateName(firstNameInput);
-            });
-        
-            // Add real-time validation for the Last Name field
-            lastNameInput.addEventListener("input", function() {
-                validateName(lastNameInput);
-            });
-        
-            // Add real-time validation for the Email field
-            emailInput.addEventListener("input", function() {
-                validateEmail(emailInput);
-            });
-        
-            // Add real-time validation for the Password field
-            passwordInput.addEventListener("input", function() {
-                validatePassword(passwordInput);
-            });
-        
-            // Add real-time validation for the Confirm Password field
-            confirmPasswordInput.addEventListener("input", function() {
-                validateConfirmPassword(passwordInput, confirmPasswordInput);
-            });
-        
-            // Add real-time validation for the License Upload field
-            licenseUploadInput.addEventListener("input", function() {
-                validateLicenseUpload(licenseUploadInput);
-            });
-        
-            // Validate the entire form on submission
-            form.addEventListener("submit", function(event) {
-                if (!validateForm()) {
-                    event.preventDefault();
-                }
-            });
-        
-            // Validation functions
-            function validateName(inputField) {
-                const name = inputField.value;
-                const nameRegex = /^[A-Za-z]+$/;
-        
-                if (!nameRegex.test(name)) {
-                    displayErrorMessage(inputField, "Name must contain only letters.");
-                } else {
-                    clearErrorMessage(inputField);
-                }
+            if (inputValue === "") {
+                errorElement.textContent = "This field should not be blank";
+            } else if (!namePattern.test(inputValue)) {
+                errorElement.textContent = "Only alphabetic characters and spaces are allowed, and the first letter should be capital";
+            } else {
+                errorElement.textContent = "";
             }
-        
-            function validateEmail(inputField) {
-                const email = inputField.value;
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        
-                if (!emailRegex.test(email)) {
-                    displayErrorMessage(inputField, "Invalid email format.");
-                } else {
-                    clearErrorMessage(inputField);
-                }
+        }
+          // Function to validate phone number (10 digits)
+          function validatePhoneNumber(phone) {
+              // Regular expression for basic phone number validation
+              var phonePattern = /^[0-9]{10}$/;
+      
+              var phoneError = document.getElementById('phoneError');
+      
+              if (phonePattern.test(phone)) {
+                  // Valid phone number format
+                  phoneError.textContent = '';
+              } else {
+                  // Invalid phone number format
+                  phoneError.textContent = 'Invalid phone number format';
+              }
+          }
+        //validate email
+          function validateEmail(email) {
+            // Regular expression for basic email validation
+            var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+  
+            var emailError = document.getElementById('emailError');
+  
+            if (emailPattern.test(email)) {
+                // Valid email format
+                emailError.textContent = '';
+            } else {
+                // Invalid email format
+                emailError.textContent = 'Invalid email format';
             }
+        }
+           // Function to validate password (at least 8 characters)
+           function validatePassword() {
+            var password = document.getElementById('password').value;
+            var passwordError = document.getElementById('passwordError');
         
-            function validatePassword(inputField) {
-                const password = inputField.value;
+            // Regular expression for checking if the password contains at least 8 characters and at least one special character
+            var passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
         
-                if (password.length < 8) {
-                    displayErrorMessage(inputField, "Password must be at least 8 characters.");
-                } else {
-                    clearErrorMessage(inputField);
-                }
+            if (passwordPattern.test(password)) {
+                // Password meets the criteria
+                passwordError.textContent = '';
+            } else {
+                // Password does not meet the criteria
+                passwordError.textContent = 'Password must contain at least 8 characters, including at least one special character';
             }
+        }
         
-            function validateConfirmPassword(passwordField, confirmPasswordField) {
-                const password = passwordField.value;
-                const confirmPassword = confirmPasswordField.value;
-        
-                if (password !== confirmPassword) {
-                    displayErrorMessage(confirmPasswordField, "Passwords do not match.");
-                } else {
-                    clearErrorMessage(confirmPasswordField);
-                }
-            }
-        
-            function validateLicenseUpload(inputField) {
-                const licenseUpload = inputField.files[0];
-        
-                if (!licenseUpload) {
-                    displayErrorMessage(inputField, "License upload is compulsory.");
-                } else {
-                    clearErrorMessage(inputField);
-                }
-            }
-        
-            function validateForm() {
-                const validationFields = [
-                    firstNameInput,
-                    lastNameInput,
-                    emailInput,
-                    passwordInput,
-                    confirmPasswordInput,
-                    licenseUploadInput
-                ];
-        
-                let isValid = true;
-        
-                for (const field of validationFields) {
-                    if (field.getAttribute("data-valid") === "false") {
-                        isValid = false;
-                    }
-                }
-        
-                return isValid;
-            }
-        
-            function displayErrorMessage(inputField, message) {
-                const errorMessage = inputField.nextElementSibling;
-                errorMessage.textContent = message;
-                inputField.setAttribute("data-valid", "false");
-            }
-        
-            function clearErrorMessage(inputField) {
-                const errorMessage = inputField.nextElementSibling;
-                errorMessage.textContent = "";
-                inputField.setAttribute("data-valid", "true");
-            }
-        });
-        
+
+      // Function to validate confirm password
+      function validateConfirmPassword() {
+        var password = document.getElementById('password').value; // Get the password
+        var confirmPassword = document.getElementById('confirm_password').value; // Get the confirm password
+        var confirmPasswordError = document.getElementById('confirmPasswordError'); // Get the error element
+    
+        if (password === confirmPassword) {
+            // Passwords match
+            confirmPasswordError.textContent = '';
+        } else {
+            // Passwords do not match
+            confirmPasswordError.textContent = 'Passwords do not match';
+        }
+    }
     </script>
 </body>
 </html>
+{% endblock body %}

@@ -127,3 +127,8 @@ STATICFILES_DIRS=[
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'stayhubapp.CustomUser'
+
+JAZZMIN_SETTINGS = {
+    "site_header": "StayHub",
+    "welcome_sign": "Welcome to the StayHub",
+}

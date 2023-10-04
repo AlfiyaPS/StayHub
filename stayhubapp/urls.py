@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.urls import path
 from.import views
+ 
 urlpatterns = [
     path('',views.index,name="home"),
     path('login/',views.login,name="login"),
@@ -10,5 +11,8 @@ urlpatterns = [
     path('guest_dashboard/',views.guest_dashboard,name="guest_dashboard"),
     path('logout/',views.logout,name="logout"),
     path('services/', views.services, name='services'),
+    path('admin_dashboard/', views.admin_dashboard, name='admin_dashboard'),
 
+    
+    
 ]
