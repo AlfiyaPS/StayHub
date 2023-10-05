@@ -137,17 +137,16 @@ def login(request):
                 auth_login(request, user)
                 if user.is_staff:
                     return redirect('admin_dashboard')
-            
                 elif user.is_guest:
                     return redirect('guest_dashboard')
                 elif user.is_host:
                     return redirect('host_dashboard')
                 
-        else:
+            else:
                 error_message = "Invalid login credentials."
                 return render(request, "login.html", {"error_message": error_message})
 
-    else:
+        else:
             error_message = "username and password are required fields."
             return render(request, "login.html", {"error_message": error_message})
 

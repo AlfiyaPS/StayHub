@@ -5,12 +5,14 @@ from django.contrib.auth.models import AbstractUser
 class CustomUser(AbstractUser):
     GUEST = 1
     HOST = 2
+    ADMIN = 3
     
     
 
     ROLE_CHOICE = (
      (GUEST, 'guest'),
      (HOST, 'host'),
+     (ADMIN, 'admin',)
      
      
     )
