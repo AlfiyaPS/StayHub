@@ -2,13 +2,12 @@ from django.shortcuts import render,redirect
 from django.http import HttpResponse
 from .models import CustomUser
 from django.contrib import messages
-from django.shortcuts import render
 from django.contrib.auth import get_user_model
 from django.db import IntegrityError
 from django.contrib.auth import authenticate, login as auth_login,logout
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import logout
-from django.contrib import auth
+from django.contrib.auth import logout as auth
+# from django.contrib import auth
 
 # Create your views here.
 
@@ -124,44 +123,67 @@ def registerproperty(request):
 
 
 def login(request):
-    
-
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-
-        if username and password:
-            user = authenticate(request, username=username, password=password)
-
-            if user is not None:
-                auth_login(request, user)
-                if user.is_staff:
-                    return redirect('admin_dashboard')
-                elif user.is_guest:
-                    return redirect('guest_dashboard')
-                elif user.is_host:
-                    return redirect('host_dashboard')
-                
-            else:
-                error_message = "Invalid login credentials."
-                return render(request, "login.html", {"error_message": error_message})
-
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            auth_login(request, user)
+            request.session['username'] = username
+            if user.is_staff:
+                return redirect('admin_dashboard')
+            elif user.is_guest:
+                return redirect('guest_dashboard')
+            elif user.is_host:
+                return redirect('host_dashboard')
         else:
-            error_message = "username and password are required fields."
-            return render(request, "login.html", {"error_message": error_message})
+            messages.error(request, "Invalid login credentials")
 
-    return render(request, "login.html")
+    response = render(request, 'login.html')
+    response['Cache-Control'] = 'no-store, must-revalidate'
+    return response
+            
+           
+           
+           
+           
+           
+           
+           
+    #         messages.error(request, "Invalid username or password")
+    # return render(request, "login.html")
 
 def host_dashboard(request):
-    return render(request,'host_dashboard.html')
+    if 'username' in request.session:
+       response = render(request, 'host_dashboard.html')
+       response['Cache-Control'] = 'no-store, must-revalidate'
+       return response
+    else:
+       return redirect('/')
+    #return render(request,'host_dashboard.html')
 
 def guest_dashboard(request):
-    return render(request,'guest_dashboard.html')
+    if 'username' in request.session:
+       response = render(request, 'guest_dashboard.html')
+       response['Cache-Control'] = 'no-store, must-revalidate'
+       return response
+    else:
+       return redirect('/')
+
+
+
+    # return render(request,'guest_dashboard.html')
 
 def logout(request):
-    auth.logout(request)
+    auth(request)
     return redirect('/')
 def services(request):
     return render(request, 'inc/services.html')
 def admin_dashboard(request):
-    return render(request,'admin_dashboard.html')
+    if 'username' in request.session:
+       response = render(request, 'admin_dashboard.html')
+       response['Cache-Control'] = 'no-store, must-revalidate'
+       return response
+    else:
+       return redirect('/')
+    #return render(request,'admin_dashboard.html')

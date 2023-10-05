@@ -132,3 +132,16 @@ JAZZMIN_SETTINGS = {
     "site_header": "StayHub",
     "welcome_sign": "Welcome to the StayHub",
 }
+
+#session settings
+SESSION_ENGINE = "django.contrib.sessions.backends.db"
+SESSION_COOKIE_NAME = "sessionid"
+SESSION_COOKIE_AGE = 600
+LOGIN_URL = 'login'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'stayhub432@gmail.com'
+EMAIL_HOST_PASSWORD = 'qjye xbvu pvaj xsjd'
