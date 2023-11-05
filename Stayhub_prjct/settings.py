@@ -31,7 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'jazzmin',
+    
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -104,9 +104,16 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
-
+USE_I18N = True
 LANGUAGE_CODE = 'en-us'
-
+LANGUAGES = [
+    ('en', ('English')),
+    # Add other languages here
+]
+# Set the path to your project's `locale` directory
+LOCALE_PATHS = [
+    os.path.join(BASE_DIR, 'locale'),
+]
 TIME_ZONE = 'UTC'
 
 USE_I18N = True
@@ -128,11 +135,9 @@ STATICFILES_DIRS=[
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'stayhubapp.CustomUser'
 
-JAZZMIN_SETTINGS = {
-    "site_header": "StayHub",
-    "welcome_sign": "Welcome to the StayHub",
-}
-
+#media 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 #session settings
 SESSION_ENGINE = "django.contrib.sessions.backends.db"
 SESSION_COOKIE_NAME = "sessionid"

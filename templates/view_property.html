@@ -1,0 +1,179 @@
+{% extends 'host_dashboard.html' %}
+
+{% block title %}View Profile{% endblock %}
+
+{% block page_content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Property Details</title>
+
+    <!-- Add a new CSS block for property details -->
+    <style>
+        /* Additional CSS specific to the property details page */
+        .property-details-container {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .property-details-title {
+            font-size: 24px;
+            color: #333;
+            margin: 20px 0;
+        }
+
+        .property-details-info {
+            font-size: 18px;
+            margin: 10px 0;
+            text-align: center; /* Align text to the center */
+        }
+
+        .property-details-info p {
+            margin: 5px 0;
+        }
+
+        .property-images-container {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .property-images-title {
+            font-size: 24px;
+            color: #333;
+            margin: 20px 0;
+        }
+
+        .property-images-gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center; /* Center-align images */
+            align-items: center;
+        }
+
+        .property-images-gallery img {
+            max-width: 100%; /* Limit image width */
+            max-height: 300px; /* Fix the height of images */
+            margin: 10px;
+        }
+
+        .edit-button {
+            background-color: #45a049;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        .back-button {
+            background-color: #ccc;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+
+        .back-button:hover {
+            background-color: #999;
+        }
+        .property-images-gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center; /* Center-align images */
+        }
+
+        .property-images-gallery img {
+            max-width: 100%; /* Limit image width */
+            max-height: 300px; /* Fix the height of images */
+            margin: 10px;
+            transition: transform 0.4s ease, opacity 0.4s ease; /* Increase duration and use ease timing function */
+            cursor: pointer; /* Change cursor on hover */
+            transform-origin: center center; /* Set the transformation origin to the center */
+        }
+
+        .property-images-gallery img:hover {
+            transform: scale(1.1); /* Enlarge the image on hover (removed rotateY) */
+            opacity: 0.7; /* Reduce image opacity on hover to make it transparent */
+        }
+        .property-images-gallery .image-container {
+            position: relative;
+        }
+        .image-description {
+            position: absolute;
+            top: 50%; /* Center vertically */
+            left: 50%; /* Center horizontally */
+            transform: translate(-50%, -50%); /* Center the description text */
+            background: rgba(0, 0, 0, 0.7); /* Add a transparent background */
+            color: #fff;
+            padding: 5px;
+            border-radius: 5px;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.4s ease; /* Smooth opacity transition */
+            text-align: center;
+        }
+    
+
+        /* Tooltip for image descriptions */
+        .image-tooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.7);
+            color: #fff;
+            padding: 5px;
+            border-radius: 5px;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.8s;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+        .property-images-gallery .image-container:hover .image-description {
+            opacity: 1; /* Show the description on image hover */
+        }
+        .property-images-gallery .image-container:hover .image-tooltip {
+            opacity: 1; /* Show tooltip on image hover */
+        }
+    </style>
+</head>
+<body>
+    <div class="content">
+       <center> <h1 class="property-details-title">Property Details</h1></center>
+        <div class="property-details-container">
+            <h2>{{ property.property_name }}</h2>
+            <div class="property-details-info">
+                <p>Description: {{ property.description }}</p>
+                <p>Location: {{ property.location }}</p>
+                <p>Property Type: {{ property.property_type }}</p>
+                <p>Number of Bedrooms: {{ property.number_of_bedrooms }}</p>
+                <p>Number of Bathrooms: {{ property.number_of_bathrooms }}</p>
+                <p>Capacity: {{ property.capacity }}</p>
+                <p>Price: ${{ property.price }}</p>
+            </div>
+        </div>
+
+        <!-- Display the property images if available -->
+        <div class="property-images-container">
+            <h2 class="property-images-title">Property Images</h2>
+            <div class="property-images-gallery">
+                {% if images %}
+                {% for image in images %}
+                    <div class="image-container">
+                        <img src="{{ image.image.url }}" alt="Property Image">
+                        <span class="image-tooltip">{{ image.description }}</span>
+                    </div>
+                {% endfor %}
+            {% endif %}
+            </div>
+        </div>
+        <a href="{% url 'edit_property' property_id=property.property_id %}" class="edit-button">Edit Property</a>
+        <a href="{% url 'host_dashboard' %}" class="back-button">Back</a>
+    </div>
+</body>
+</html>
+{% endblock %}
