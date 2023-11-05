@@ -1,0 +1,60 @@
+{% extends 'admin_dashboard.html' %}
+{% block title %}View Host{% endblock %}
+{% block page_content %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>View Hosts</title>
+    <style>
+        /* Add your CSS styles here for table formatting */
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            margin: 20px auto;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .btn {
+            background-color: #4CAF50; /* Green color */
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1><center>View Hosts</center></h1>
+    <table>
+        <tr>
+            <th>Host Name</th>
+            <th>Email</th>
+            <th>Property Name</th>
+            <th>Action</th>
+        </tr>
+        {% for host in hosts %}
+        <tr>
+            <td>{{ host.host_first_name }} {{ host.host_last_name }}</td>
+            <td>{{ host.email }}</td>
+            <td>{{ host.property_name }}</td>
+            <td>
+                <a href="{% url 'delete_host' host.id %}">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>   
+</body>
+</html>
+{% endblock %}

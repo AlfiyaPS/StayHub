@@ -1,0 +1,63 @@
+{% extends 'admin_dashboard.html' %}
+
+{% block title %}View Guest{% endblock %}
+
+{% block page_content %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>View Guests</title>
+    <style>
+        
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            margin: 20px auto;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .btn {
+            background-color: #4CAF50; /* Green color */
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1><center>View Guests</center></h1>
+    <table>
+        <tr>
+            <th>Guest Name</th>
+            <th>Email</th>
+            <th>Phone Number</th>
+            <th>Action</th>
+        </tr>
+        {% for guest in guests %}
+        <tr>
+            <td>{{ guest.guest_first_name }} {{ guest.guest_last_name }}</td>
+            <td>{{ guest.email }}</td>
+            <td>{{ guest.phone_number }}</td>
+            <td>
+                <a href="{% url 'delete_guest' guest.id %}">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    <a class="btn" href="{% url 'admin_dashboard' %}">Back</a>
+</body>
+</html>
+{% endblock %}
