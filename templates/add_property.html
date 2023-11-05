@@ -1,0 +1,83 @@
+{% extends 'host_dashboard.html' %}
+
+{% block title %}Add Property{% endblock %}
+
+{% block page_content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Property</title>
+    <style>
+        /* Additional CSS specific to the add_property page */
+        .add-property-container {
+            background-color: #f7f7f7;
+            padding: 20px;
+            text-align: center; /* To center-align the form */
+        }
+        
+        .add-property-title {
+            font-size: 24px;
+            color: #333;
+            margin: 20px 0;
+        }
+        
+        .add-property-form {
+            font-size: 18px;
+            margin: 10px 0;
+            text-align: left; /* Align text to the left */
+        }
+        
+        .add-property-form label {
+            display: block;
+            margin: 5px 0;
+        }
+        
+        .add-property-form input[type="text"],
+        .add-property-form input[type="file"] {
+            width: 100%; /* Set width to 100% for consistent alignment */
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+        }
+        
+        .add-property-button {
+            background-color: #45a049;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+        
+        .add-property-button:hover {
+            background-color: #3f9442;
+        }
+    </style>
+    
+</head>
+<body>
+    <div class="add-property-container">
+        <h1 class="add-property-title">Add Property</h1>
+        <form class="add-property-form" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+        
+            {{ image_formset.management_form }}
+            {% for image_form in image_formset %}
+                <div class="formset">
+                    {{ image_form.as_table }}
+                </div>
+            {% endfor %}
+            
+            <input class="add-property-button" type="submit" value="Submit">
+        </form>
+        
+        <a href="{% url 'host_dashboard' %}">Back</a>
+
+    </div>
+</body>
+</html>
+{% endblock %}

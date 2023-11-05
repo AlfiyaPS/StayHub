@@ -1,0 +1,17 @@
+{% extends 'guest_dashboard.html' %}
+
+{% block title %}Edit Profile{% endblock %}
+
+{% block page_content %}
+<div class="content edit-profile-container">
+    <h1 class="edit-profile-title">Edit Guest Profile</h1>
+    <div class="edit-profile-form">
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="green-button">Save</button>
+        </form>
+    </div>
+    <a class="back-button" href="{% url 'guest_profile' %}">Back to Profile</a>
+</div>
+{% endblock %}
