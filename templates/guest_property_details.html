@@ -1,0 +1,87 @@
+{% extends 'inc/nav_guest.html' %}
+
+{% block title %}Property{% endblock %}
+
+{% block page_content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Property Details</title>
+    <style>
+        .navbar {
+            font-family: "Your Navbar Font", sans-serif;
+        }
+        .content {
+            font-family: "Times New Roman", serif;
+        }
+        .property-images-container {
+            text-align: center;
+        }
+
+        .property-images-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Grid with responsive columns */
+            gap: 10px; /* Add some gap between images */
+        }
+
+        .property-images-gallery img {
+            width: 400px; /* Set a fixed width for the images */
+            height: 300px; /* Set a fixed height for the images */
+            object-fit: cover; /* Ensure the aspect ratio is maintained */
+            transition: transform 0.4s ease, opacity 0.4s ease; /* Transition for hover effect */
+            cursor: pointer; /* Change cursor on hover */
+        }
+
+        .property-images-gallery img:hover {
+            transform: scale(1.1); /* Enlarge the image on hover */
+            opacity: 0.7; /* Reduce image opacity on hover to make it transparent */
+        }
+
+        .image-description {
+            position: absolute;
+            top: 50%; /* Center vertically */
+            left: 50%; /* Center horizontally */
+            transform: translate(-50%, -50%); /* Center the description text */
+            background: rgba(0, 0, 0, 0.7); /* Add a transparent background */
+            color: #fff;
+            padding: 5px;
+            border-radius: 5px;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.4s ease; /* Smooth opacity transition */
+            text-align: center;
+        }
+
+        .property-images-gallery img:hover + .image-description {
+            opacity: 1; /* Show the description on image hover */
+        }
+    </style>
+</head>
+<body>
+    <h1>{{ property.property_name }}</h1>
+    <div class="property-images-container">
+        <h2>Property Images</h2>
+        <div class="property-images-gallery">
+            {% for image in images %}
+                <div class="image-container">
+                    <img src="{{ image.image.url }}" alt="Property Image">
+                    <span class="image-description">{{ image.description }}</span>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div>
+        <h2>Description</h2>
+        {{ property.description }}
+        <p>Location: {{ property.location }}</p>
+
+        <h2>Host Details</h2>
+        <p>Host Name: {{ host_first_name }}</p>
+        <p>Email: {{ property.host.email }}</p>
+        <!-- Add other host details as needed -->
+    </div>
+</body>
+</html>
+{% endblock %}

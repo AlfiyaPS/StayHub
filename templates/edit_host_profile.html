@@ -1,0 +1,133 @@
+{% extends 'host_dashboard.html' %}
+
+{% block title %}Edit Host Profile{% endblock %}
+
+{% block page_content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Host Profile</title>
+    <style>
+        /* Additional CSS specific to the edit host profile page */
+        .edit-host-profile-container {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .edit-host-profile-title {
+            font-size: 24px;
+            color: #333;
+            margin: 20px 0;
+        }
+
+        .edit-host-profile-form {
+            font-size: 18px;
+            text-align: left;
+        }
+
+        .edit-host-profile-form label {
+            display: block;
+            margin: 10px 0;
+        }
+
+        .edit-host-profile-form input[type="text"],
+        .edit-host-profile-form select {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .green-button {
+            background-color: #45a049;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        .green-button:hover {
+            background-color: #3f9442;
+        }
+
+        .back-button {
+            background-color: #ccc;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .back-button:hover {
+            background-color: #999;
+        }
+    </style>
+</head>
+<body>
+    <div class="content edit-host-profile-container">
+        <h1 class="edit-host-profile-title">Edit Host Profile</h1>
+        <form class="edit-host-profile-form" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="host_first_name">First Name:</label>
+                <input type="text" id="host_first_name" name="host_first_name" onkeyup="validateName(this, 'first_name_error')" value="{{ form.host_first_name.value }}" placeholder="Enter your First name" required>
+                <span id="first_name_error" style="color: red;"></span>
+            </div>
+            <div class="form-group">
+                <label for="host_last_name">Last Name:</label>
+                <input type="text" id="host_last_name" name="host_last_name" onkeyup="validateName(this, 'last_name_error')" value="{{ form.host_last_name.value }}" placeholder="Enter your last name" required>
+                <span id="last_name_error" style="color: red;"></span>
+            </div>
+            <div class="form-group">
+                <label for="property_name">Property Name:</label>
+                <input type="text" id="property_name" name="property_name" onkeyup="validatePropertyName(this, 'property_name_error')" value="{{ form.property_name.value }}" placeholder="Enter your Property Name" required>
+                <span id="property_name_error" style="color: red;"></span>
+            </div>
+            <button type="submit" class="green-button">Save</button>
+        </form>
+        <a class="green-button" href="{% url 'host_dashboard' %}">Back</a>
+    </div>
+</body>
+
+<script src="script.js"></script>
+<script>
+    // Function to validate first name (only alphabets)
+    function validateName(inputElement, errorId) {
+        const namePattern = /^[A-Z][a-zA-Z\s]*$/; // First letter capital, alphabetic characters, and spaces
+        const inputValue = inputElement.value.trim();
+        const errorElement = document.getElementById(errorId);
+
+        if (inputValue === "") {
+            errorElement.textContent = "This field should not be blank";
+        } else if (!namePattern.test(inputValue)) {
+            errorElement.textContent = "Only alphabetic characters and spaces are allowed, and the first letter should be capital";
+        } else {
+            errorElement.textContent = "";
+        }
+    }
+
+    // Function to validate property name
+    function validatePropertyName(inputElement, errorId) {
+        const namePattern = /^[A-Za-z\s]+$/; // Alphabetic characters and spaces
+        const inputValue = inputElement.value.trim();
+        const errorElement = document.getElementById(errorId);
+
+        if (inputValue === "") {
+            errorElement.textContent = "This field should not be blank";
+        } else if (!namePattern.test(inputValue)) {
+            errorElement.textContent = "Only alphabetic characters and spaces are allowed";
+        } else {
+            errorElement.textContent = "";
+        }
+    }
+</script>
+</html>
+{% endblock %}

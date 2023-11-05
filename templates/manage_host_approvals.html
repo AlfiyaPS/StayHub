@@ -1,0 +1,72 @@
+{% extends "admin_dashboard.html" %}
+
+{% block page_content %}
+    <h1>Manage Host Approvals</h1>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        /* Style the buttons */
+        button {
+            padding: 5px 10px;
+            border: none;
+            cursor: pointer;
+            border-radius: 3px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        /* Red button for reject */
+        button.reject {
+            background-color: #FF0000;
+            color: white;
+        }
+
+        /* Green button for approve */
+        button.approve {
+            background-color: #228B22;
+            color: white;
+        }
+    </style>
+
+    <table>
+        <tr>
+            <th>Host Name</th>
+            <th>Property Name</th>
+            <th>License Upload</th>
+            <th>Actions</th>
+        </tr>
+        {% for host in unapproved_hosts %}
+        <tr>
+            <td>{{ host.host_first_name }} {{ host.host_last_name }}</td>
+            <td>{{ host.property_name }}</td>
+            <td>
+                <a href="{{ host.license_upload.url }}" target="_blank">View License</a>
+            </td>
+            <td>
+                <form method="post" action="{% url 'manage_host_approvals' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="host_id" value="{{ host.id }}">
+                    <button type="submit" name="action" value="approve" class="approve">Approve</button>
+                    <button type="submit" name="action" value="reject" class="reject">Reject</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
