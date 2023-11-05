@@ -89,6 +89,13 @@
     
     <div class="login-container">
         <h2>Login</h2>
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
         <form action="#" method="post">
             {% csrf_token %}
             <div class="form-group">
@@ -104,33 +111,7 @@
         <p class="forgot-password"><a href="{% url "password_reset" %}">Forgot your password?</a></p>
     <script src="https://www.google.com/recaptcha/api.js" async defer>
     </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const alertType = urlParams.get('alert');
-
-            if (alertType === 'invalid_captcha') {
-                showAlert('Invalid login Captcha', 'danger');
-            } else if (alertType === 'invalid_credentials') {
-                showAlert('Invalid login credentials.', 'danger');
-            } else if (alertType === 'fill_fields') {
-                showAlert('Please fill out all fields.', 'warning');
-            }
-
-            function showAlert(message, alertType) {
-                const alertDiv = document.createElement('div');
-                alertDiv.classList.add('alert', `alert-${alertType}`, 'alert-top');
-                alertDiv.textContent = message;
-
-                const container = document.querySelector('.container');
-                container.insertBefore(alertDiv, container.firstChild);
-
-                setTimeout(function() {
-                    alertDiv.remove();
-                }, 5000);  // Remove after 5 seconds
-            }
-        });
-    </script>
+    
 
 
 </body>

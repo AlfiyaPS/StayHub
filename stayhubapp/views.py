@@ -81,47 +81,6 @@ def registerproperty(request):
 
     return render(request, "registerproperty.html")
 
-
-
-
-
-# def login(request):
-#     if request.method == 'POST':
-#         email = request.POST.get('email')
-#         password = request.POST.get('password')
-
-#         if email and password:
-#             user = authenticate(request, email=email, password=password)
-
-#             if user is not None:
-#                 auth_login(request, user)
-
-#                 if request.user.ROLE_CHOICE==CustomUser.CUSTOMER:
-                
-#                     return redirect('/')
-#                 # elif request.user.user_typ == CustomUser.VENDOR:
-#                 #     print("user is therapist")
-#                 #     return redirect(reverse('therapist'))
-#                 elif request.user.ROLE_CHOICE== CustomUser.DIETITIAN:
-#                     print("user is Dietitian")                   
-#                     return redirect('d_index')
-#                 elif request.user.ROLE_CHOICE== CustomUser.DOCTOR:
-#                     print("user is Doctor")                   
-#                     return redirect('dr_index')
-
-
-#                 # else:
-#                 #     print("user is normal")
-#                 #     return redirect('')
-
-#             else:
-#                 messages.success(request,("Invalid credentials."))
-#         else:
-#             messages.success(request,("Please fill out all fields."))
-        
-#     return render(request, 'signin.html')
-
-
 def login(request):
     if request.method == 'POST':
         username = request.POST.get('username')

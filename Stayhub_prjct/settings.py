@@ -139,6 +139,7 @@ SESSION_COOKIE_NAME = "sessionid"
 SESSION_COOKIE_AGE = 600
 LOGIN_URL = 'login'
 
+#forgot password settings.py
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
