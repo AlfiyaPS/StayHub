@@ -5,6 +5,7 @@ from django.contrib.auth.views import PasswordResetView,PasswordResetDoneView,Pa
 
 
  
+ 
 urlpatterns = [
     path('',views.index,name="home"),
     path('login/',views.login,name="login"),
@@ -20,6 +21,25 @@ urlpatterns = [
     path('password_reset/', PasswordResetView.as_view(), name='password_reset'),
     path('password_reset/done/', PasswordResetDoneView.as_view(), name='password_reset_done'),
     path('reset/<uidb64>/<token>/', PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
-    path('reset/done/', PasswordResetCompleteView.as_view(), name='password_reset_complete')
+    path('reset/done/', PasswordResetCompleteView.as_view(), name='password_reset_complete'),
 
+
+    path('view_hosts/', views.view_hosts, name='view_hosts'),
+    path('view_guests/', views.view_guests, name='view_guests'),
+    path('delete_guest/<int:guest_id>/', views.delete_guest, name='delete_guest'),
+    path('delete_host/<int:host_id>/', views.delete_host, name='delete_host'),
+
+    path('edit-host-profile/', views.edit_host_profile, name='edit_host_profile'),
+    path('edit-guest-profile/', views.edit_guest_profile, name='edit_guest_profile'),
+    path('host/profile/', views.host_profile, name='host_profile'),
+    path('guest_profile/', views.guest_profile, name='guest_profile'),
+    path('add_property/', views.add_property, name='add_property'),
+    path('view_property/<int:property_id>/', views.view_property, name='view_property'),
+    path('edit_property/<int:property_id>/', views.edit_property, name='edit_property'),
+
+    path('manage_host_approvals/', views.manage_host_approvals, name='manage_host_approvals'),    
+
+    path('add_availability/<int:property_id>/', views.add_availability, name='add_availability'),
+
+    path('property/<int:property_id>/', views.guest_property_details, name='guest_property_details'),
 ]

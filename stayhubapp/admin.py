@@ -1,22 +1,17 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser
+from .models import CustomUser, Guest, Host
+from django.utils.translation import gettext as _
+from .models import Property, PropertyType
 
-class CustomUserAdmin(UserAdmin):
-    list_display = ('username', 'first_name', 'last_name', 'email', 'is_active', 'is_guest', 'is_host')
-    list_filter = ('is_guest', 'is_host', 'is_active')
-    fieldsets = (
-        (None, {'fields': ('username', 'password')}),
-        ('Personal Info', {'fields': ('first_name', 'last_name', 'email')}),
-        ('Permissions', {'fields': ('is_active', 'is_guest', 'is_host')}),
-    )
-    add_fieldsets = (
-        (None, {
-            'classes': ('wide',),
-            'fields': ('username', 'password1', 'password2', 'is_active', 'is_guest', 'is_host'),
-        }),
-    )
+class CustomUserAdmin(admin.ModelAdmin):
+    list_display = ('username', 'first_name', 'last_name', 'email', 'is_active')
+    list_filter = ('is_active',)
     search_fields = ('username', 'email', 'first_name', 'last_name')
     ordering = ('username',)
 
 admin.site.register(CustomUser, CustomUserAdmin)
+admin.site.register(Guest)
+admin.site.register(Host)
+
+admin.site.register(Property)
+admin.site.register(PropertyType)
