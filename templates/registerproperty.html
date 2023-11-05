@@ -1,4 +1,4 @@
-
+{% extends 'layouts/main.html' %}
 {% load static %}
 {% block body %}
 <!DOCTYPE html>
@@ -9,124 +9,121 @@
     <link rel="stylesheet" href="style.css">
     <title>Host Registration</title>
     <style>
-        /* Reset some default browser styles */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-/* Global styles */
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f7f7f7;
-}
-
-.container {
-    max-width: 500px;
-    margin: 0 auto;
-    background-color: #fff;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-h2 {
-    font-size: 24px;
-    text-align: center;
-    margin-bottom: 20px;
-    color: #333;
-}
-
-.form-group {
-    margin-bottom: 20px;
-}
-
-label {
-    display: block;
-    font-size: 18px;
-    color: #555;
-    margin-bottom: 5px;
-}
-
-input[type="text"],
-input[type="email"],
-input[type="password"],
-input[type="file"] {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 3px;
-    font-size: 16px;
-    background-color: #f9f9f9;
-    color: #333;
-    transition: border-color 0.3s;
-}
-
-input[type="text"]:focus,
-input[type="email"]:focus,
-input[type="password"]:focus,
-input[type="file"]:focus {
-    outline: none;
-    border-color: #007BFF;
-}
-
-button {
-    background-color: #007BFF;
-    color: #fff;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 3px;
-    cursor: pointer;
-    font-size: 18px;
-    transition: background-color 0.3s;
-}
-
-button:hover {
-    background-color: #0056b3;
-}
-
-/* Validation error messages */
-.error-message {
-    color: #ff0000;
-    font-size: 14px;
-    margin-top: 5px;
-}
-
-/* Responsive styles */
-@media (max-width: 768px) {
-    .container {
-        max-width: 100%;
-        margin: 10px;
-    }
-}
-
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 120px;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+    
+        .registration-form-container {
+            width: 150%;
+            max-width: 500px; 
+            background-color: #fff;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+    
+        .form-group {
+            margin-bottom: 20px;
+        }
+    
+        label {
+            display: block;
+            font-size: 18px;
+            color: #555;
+            margin-bottom: 10px;
+        }
+    
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            font-size: 16px;
+            background-color: #f9f9f9;
+            color: #333;
+            transition: border-color 0.3s;
+        }
+    
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="password"]:focus,
+        input[type="file"]:focus {
+            outline: none;
+            border-color: #007BFF;
+        }
+    
+        button.submit-button {
+            width: 100%;
+            background-color: #007BFF;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background-color 0.3s;
+        }
+    
+        button.submit-button:hover {
+            background-color: #0056b3;
+        }
+    
+        .error-message {
+            color: #ff0000;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+    
+        @media (max-width: 768px) {
+            .registration-form-container {
+                max-width: 100%;
+                margin: 10px;
+            }
+        }
     </style>
+    
 </head>
-<body>
-    <div class="container">
+<body><center>
+    <div class="registration-form-container">
         <h2>Host Registration</h2>
         <form id="registration-form" action="#" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="form-group">
-                <label for="first_name">First name:</label>
-                <input type="text" id="first_name" name="first_name" onkeyup="validateName(this, 'first_name_error')" placeholder="Enter your First name" required>
+                <label for="host_first_name">First name:</label>
+                <input type="text" id="host_first_name" name="host_first_name" onkeyup="validateName(this, 'first_name_error')" placeholder="Enter your First name" required>
                 <span id="first_name_error" style="color: red;"></span>
             </div>
             <div class="form-group">
-                <label for="last_name">Last Name:</label>
-                <input type="text" id="last_name" name="last_name" onkeyup="validateName(this, 'last_name_error')" placeholder="Enter your last name" required>
+                <label for="host_last_name">Last Name:</label>
+                <input type="text" id="host_last_name" name="host_last_name" onkeyup="validateName(this, 'last_name_error')" placeholder="Enter your last name" required>
                 <span id="last_name_error" style="color: red;"></span>
             </div>
             
             <div class="form-group">
                 <label for="property_name">Property Name:</label>
-                <input type="text" id="property_name" name="property_name" required>
+                <input type="text" id="property_name" name="property_name"  placeholder=" Enter Your Property Name" required>
             </div>
             <div class="form-group">
                 <label for="email">Email Address:</label>
-                <input type="text" id="email" name="email" onchange="validateEmail(this.value)">
+                <input type="text" id="email" name="email" onchange="validateEmail(this.value)" placeholder="Enter your valid Email">
                 <span id="emailError" style="color: red;"></span>
                 
             </div>
@@ -233,6 +230,6 @@ button:hover {
         }
     }
     </script>
-</body>
+</body></center>
 </html>
 {% endblock body %}
