@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Property List</title>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+</head>
+<body>
+    <div class="container">
+        <h1 class="my-4">Property List</h1>
+        <ul class="list-group">
+            {% for property in properties %}
+                <li class="list-group-item">
+                    <h2>{{ property.property_name }}</h2>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Description:</strong> {{ property.description }}</p>
+                            <p><strong>Location:</strong> {{ property.location }}</p>
+                            <p><strong>Categories:</strong>
+                                {% for category in property.categories.all %}
+                                    {{ category.name }}{% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            </p>
+                            <p><strong>Bedrooms:</strong> {{ property.number_of_bedrooms }}</p>
+                            <p><strong>Bathrooms:</strong> {{ property.number_of_bathrooms }}</p>
+                            <p><strong>Capacity:</strong> {{ property.capacity }}</p>
+                            <p><strong>Price:</strong> ${{ property.price }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Images:</strong></p>
+                            <div class="row">
+                                {% for image in property.images.all %}
+                                    <div class="col-md-4">
+                                        <img src="{{ image.url }}" alt="{{ property.property_name }} Image" class="img-fluid">
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Include Bootstrap JS and jQuery (if needed) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
