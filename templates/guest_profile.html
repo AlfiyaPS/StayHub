@@ -1,0 +1,16 @@
+
+{% extends 'guest_dashboard.html' %}
+
+{% block title %}View Profile{% endblock %}
+
+{% block page_content %}
+<div class="content guest-profile-container">
+    <h1 class="guest-profile-title">Guest Profile</h1>
+    <div class="guest-profile-details">
+        <p>First Name: {{ guest.guest_first_name }}</p>
+        <p>Last Name: {{ guest.guest_last_name }}</p>
+        
+        <p>Phone number: {{ guest.phone_number }}</p>
+    </div>
+    
+{% endblock %}
