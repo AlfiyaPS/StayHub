@@ -1,0 +1,119 @@
+{% extends 'host_dashboard.html' %}
+
+{% block title %}Edit Property{% endblock %}
+
+{% block page_content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Property</title>
+    <style>
+        /* Additional CSS specific to the edit property page */
+        .edit-property-container {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .edit-property-title {
+            font-size: 24px;
+            color: #333;
+            margin: 20px 0;
+        }
+
+        .property-form {
+            font-size: 18px;
+            text-align: left;
+        }
+
+        .property-form label {
+            display: block;
+            margin: 10px 0;
+        }
+
+        .property-form input[type="text"],
+        .property-form input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .current-images {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .current-images img {
+            max-width: 100%;
+            max-height: 200px;
+            margin: 10px;
+        }
+
+        .image-form {
+            margin-top: 20px;
+        }
+
+        .save-button {
+            background-color: #45a049;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        .back-button {
+            background-color: #ccc;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .back-button:hover {
+            background-color: #999;
+        }
+    </style>
+</head>
+<body>
+    <div class="content edit-property-container">
+        <h1 class="edit-property-title">Edit Property</h1>
+        <form class="property-form" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <!-- Display the "Property Name" field -->
+            <div>
+                <label for="{{ form.property_name.id_for_label }}">Property Name:</label>
+                {{ form.property_name }}
+            </div>
+            
+            <!-- Display the form elements -->
+            {{ form.as_p }}
+            
+            <!-- Display the current images for the property -->
+            <h2>Current Property Images</h2>
+            <div class="current-images">
+                {% for image in property.propertyimage_set.all %}
+                    <img src="{{ image.image.url }}" alt="Property Image">
+                {% endfor %}
+            </div>
+
+            <div class="image-form">
+                {{ image_form.as_p }} <!-- Add the image form -->
+            </div>
+            
+            <input type="submit" class="save-button" value="Save Changes">
+        </form>
+        <a href="{% url 'view_property' property_id=property.property_id %}" class="back-button">Back to Property Details</a>
+    </div>
+</body>
+</html>
+{% endblock %}
