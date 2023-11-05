@@ -1,0 +1,139 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <style>
+        /* FontAwesome Icons */
+        @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
+        /* Reset some default browser styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Global styles */
+        body {
+            font-size: 1.1rem;
+    color: #000000;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    transition: all 0.1s ease-in-out;
+    position: relative;
+    padding-left: 0;
+    padding-right: 0;
+        }
+
+        .navbar {
+            background-color: #fff; /* Change background color to white */
+            color: #50C878; /* Change text color to green */
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* Add shadow to the navbar */
+        }
+
+        .menu {
+            list-style: none;
+            padding: 0;
+            display: flex;
+        }
+
+        .menu li {
+            margin-right: 20px;
+        }
+
+        .menu li a {
+            text-decoration: none;
+            color: #000; /* Change text color to green */
+            display: block;
+            transition: background-color 0.3s;
+        }
+
+        .menu li a:hover {
+            background-color: #fff; /* Change background color to white */
+            color: #50C878; /* Change text color to green on hover */
+        }
+
+        .menu li a i {
+            margin-right: 10px;
+        }
+
+        /* Main content styles */
+        .content {
+            padding: 20px;
+            
+        }
+
+        header {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        
+
+        .menu select {
+            width: 100%;
+            padding: 10px 20px;
+            background-color: #50C878; /* Change background color to green */
+            color: #fff; /* Change text color to white */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .menu select option {
+            color: #000;
+            background-color: #fff; /* Change background color to white */
+        }
+        
+       
+      
+    </style>
+	<link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <div class="logo">
+                <img src="{% static 'img/stayhub_host.png' %}" alt="StayHub Host" style="height: 50px;">
+            </div>
+        </div>
+        <ul class="menu">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                   
+                    <i class="fas fa-user"></i>
+                </a>
+                <div class="dropdown-menu" aria-labelledby="profileDropdown">
+                    <span class="dropdown-item">{{ user.guest.guest_first_name }}</span>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{% url 'guest_profile' %}">View Profile</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{% url 'edit_guest_profile' %}">Edit Profile</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+                
+
+            </li>
+        </ul>
+    </nav>
+
+    <div class="content">
+        <header>
+            <!-- Your header content... -->
+        </header>
+        <main>
+            {% block page_content %}{% endblock %}
+        </main>
+     
+</body>
+</html>
