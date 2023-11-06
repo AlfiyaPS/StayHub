@@ -1,14 +1,13 @@
 from django.shortcuts import render,redirect, get_object_or_404
 from django.http import HttpResponse
-from .models import CustomUser
+from stayhubapp.models import CustomUser, Guest, Host
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.db import IntegrityError
 from django.contrib.auth import authenticate, login as auth_login,logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout as auth
-from .models import Guest
-from .models import Host
+
 from .forms import HostProfileForm, GuestProfileForm
 
 from django.forms import modelformset_factory
@@ -113,35 +112,29 @@ def login(request):
         user = authenticate(request, username=username, password=password)
 
         if user is not None:
-            if user.role == CustomUser.GUEST:
-                if hasattr(user, 'guest') and user.guest.is_guest:
-                    # Redirect to the guest dashboard
+            print(f"User role: {user.role}")
+            if isinstance(user, Guest):
+                # This user is a Guest
+                auth_login(request, user)
+                request.session['username'] = username
+                return redirect('guest_dashboard')
+            elif isinstance(user, Host):
+                # This user is a Host
+                print(f"User host approved: {user.approved}")
+                if user.approved:
                     auth_login(request, user)
                     request.session['username'] = username
-                    return redirect('guest_dashboard')
+                    return redirect('host_dashboard')
                 else:
-                    messages.error(request, "Invalid role")
-            elif user.role == CustomUser.HOST:
-                if hasattr(user, 'host') and user.host.is_host:
-                    # Check if the host is approved
-                    if user.host.approved:
-                        # Redirect to the host dashboard
-                        auth_login(request, user)
-                        request.session['username'] = username
-                        return redirect('host_dashboard')
-                    else:
-                        # Host not approved yet
-                        messages.error(request, "Your host account has not been approved yet.")
-                else:
-                    messages.error(request, "Invalid role")
-            elif user.role == CustomUser.ADMIN:
+                    messages.error(request, "Your host account has not been approved yet.")
+            elif isinstance(user, CustomUser) and user.role == CustomUser.ADMIN:
+                # This user is an admin
                 auth_login(request, user)
                 request.session['username'] = username
                 return redirect('admin_dashboard')
             else:
                 messages.error(request, "Invalid role")
         else:
-            # Display the "Invalid login credentials" message when authentication fails
             messages.error(request, "Invalid login credentials")
 
     response = render(request, 'login.html')

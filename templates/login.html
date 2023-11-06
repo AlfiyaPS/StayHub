@@ -3,101 +3,125 @@
 {% block body %}
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Login Page</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('{% static '/img/login.jpg' %}'); 
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .login-container {
+            background-color: rgba(255, 255, 255, 0.9);
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 30px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            width: 400px;
+        }
+
+        .login-container h2 {
+            font-size: 24px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+
+        .form-group input[type="text"]:focus,
+        .form-group input[type="password"]:focus {
+            border-color: #007bff;
+        }
+
+        .submit-button {
+            width: 100%;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .submit-button:hover {
+            background-color: #0056b3;
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .register-link a {
+            color: #007bff;
+            text-decoration: none;
+        }
         
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                background-image: url('{% static '/img/login.jpg' %}'); 
-                background-size: cover;
-                background-repeat: no-repeat;
-                background-position: center;
-                margin: 0;
-                padding: 0;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                min-height: 100vh;
-            }
-    
-            .login-container {
-                background-color: rgba(255, 255, 255, 0.9);
-                border: 1px solid #ddd;
-                border-radius: 5px;
-                padding: 30px;
-                box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-                width: 400px;
-            }
-    
-            .login-container h2 {
-                font-size: 24px;
-                text-align: center;
-            }
-    
-            .form-group {
-                margin-bottom: 20px;
-            }
-    
-            .form-group label {
-                display: block;
-                font-size: 14px;
-                margin-bottom: 5px;
-            }
-    
-            .form-group input[type="text"],
-            .form-group input[type="password"] {
-                width: 100%;
-                padding: 10px;
-                border: 1px solid #ccc;
-                border-radius: 3px;
-            }
-    
-            .form-group input[type="text"]:focus,
-            .form-group input[type="password"]:focus {
-                border-color: #007bff;
-            }
-    
-            .submit-button {
-                width: 100%;
-                background-color: #007bff;
-                color: white;
-                border: none;
-                padding: 10px;
-                border-radius: 3px;
-                cursor: pointer;
-            }
-    
-            .submit-button:hover {
-                background-color: #0056b3;
-            }
-    
-            .register-link {
-                text-align: center;
-                margin-top: 10px;
-            }
-    
-            .register-link a {
-                color: #007bff;
-                text-decoration: none;
-            }
-        </style>
+        .messages {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .messages li {
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 3px;
+        }
+
+        .alert-danger {
+            background-color: #ff6666;
+            color: white;
+        }
+
+        .alert-warning {
+            background-color: #ffcc00;
+            color: black;
+        }
+    </style>
 </head>
 <body>
-    
     <div class="login-container">
         <h2>Login</h2>
-        {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}
-                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-        <form action="#" method="post">
+        
+        <form action="{% url 'login' %}" method="post">
             {% csrf_token %}
+            
+            {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                <li class="alert-{{ message.tags }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            
             <div class="form-group">
                 <label for="username">User name:</label>
                 <input type="text" id="username" name="username" placeholder="username" required>
@@ -108,12 +132,10 @@
             </div>
             <button type="submit" class="submit-button">Sign In</button>
         </form>
-        <p class="forgot-password"><a href="{% url "password_reset" %}">Forgot your password?</a></p>
-    <script src="https://www.google.com/recaptcha/api.js" async defer>
-    </script>
-    
+        <p class="forgot-password"><a href="">Forgot your password?</a></p>
+    </div>
 
-
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </body>
 </html>
 {% endblock body %}

@@ -5,9 +5,6 @@ from .models import PropertyImage
 from .models import Availability
 
 
-
-
-
 class HostProfileForm(forms.ModelForm):
     class Meta:
         model = Host
