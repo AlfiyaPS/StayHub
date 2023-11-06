@@ -1,0 +1,117 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <style>
+        /* Reset some default browser styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Global styles */
+        body {
+            font-size: 1.1rem;
+            color: #000000;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+            transition: all 0.1s ease-in-out;
+            position: relative;
+            padding-left: 0;
+            padding-right: 0;
+        }
+
+        .navbar {
+            background-color: #fff;
+            color: #50C878;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .menu {
+            list-style: none;
+            padding: 0;
+            display: flex;
+        }
+
+        .menu li {
+            margin-right: 20px;
+        }
+
+        .menu li a {
+            text-decoration: none;
+            color: #000;
+            display: block;
+            transition: background-color 0.3s;
+        }
+
+        .menu li a:hover {
+            background-color: #fff;
+            color: #50C878;
+        }
+
+        .menu li a i {
+            margin-right: 10px;
+        }
+
+        /* Main content styles */
+        .content {
+            padding: 20px;
+        }
+
+        header {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        /* FontAwesome Icons */
+        @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
+
+        .menu select {
+            width: 100%;
+            padding: 10px 20px;
+            background-color: #50C878;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .menu select option {
+            color: #000;
+            background-color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <img src="{% static 'img/stayhub_host.png' %}" alt="StayHub Host" style="height: 50px;">
+        </div>
+        <ul class="menu">
+            <li><a href="{% url 'admin:index' %}"><i class="fas fa-home"></i>Dashboard</a></li>
+            <li><a href="{% url 'view_guests' %}"><i class="fas fa-chart-bar"></i>View Guests</a></li>
+            <li><a href="{% url 'view_hosts' %}"><i class="fas fa-chart-bar"></i>View Hosts</a></li>
+            <li><a href="{% url 'manage_host_approvals' %}"><i class="fas fa-check"></i>Manage Host Approvals</a></li>
+            <li><a href="{% url 'logout' %}"><i class="fas fa-cog"></i>Logout</a></li>
+        </ul>
+    </nav>
+    
+    <!-- Main Content -->
+    <div class="content">
+        <header>
+            
+        </header>
+        <main>
+            {% block page_content %}{% endblock %}
+        </main>
+    </div>
+</body>
+</html>

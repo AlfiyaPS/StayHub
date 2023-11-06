@@ -3,85 +3,205 @@
 {% block title %}Property{% endblock %}
 
 {% block page_content %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Property Details</title>
-    <style>
-        .navbar {
-            font-family: "Your Navbar Font", sans-serif;
-        }
-        .content {
-            font-family: "Times New Roman", serif;
-        }
-        .property-images-container {
-            text-align: center;
-        }
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Property Details</title>
+        <style>
+            .navbar {
+                font-family: "Your Navbar Font", sans-serif;
+            }
+            .content {
+                font-family: "Times New Roman", serif;
+            }
+            .property-details {
+                display: flex;
+                justify-content: space-between;
+            }
+            .property-images-container {
+                width: 50%;
+                text-align: center;
+            }
+            .property-booking-container {
+                width: 500px;
+                height: 350px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                padding: 50px;
+                background-color: #55ca86;
+            }
+    
+            .property-images-gallery {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 10px;
+            }
+    
+            .property-images-gallery img {
+                width: 300px;
+                height: 250px;
+                object-fit: cover;
+                transition: transform 0.4s ease, opacity 0.4s ease;
+                cursor: pointer;
+            }
+    
+            .property-images-gallery img:hover {
+                transform: scale(1.1);
+                opacity: 0.7;
+            }
+    
+            .image-description {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: rgba(0, 0, 0, 0.7);
+                color: #fff;
+                padding: 5px;
+                border-radius: 5px;
+                font-size: 14px;
+                opacity: 0;
+                transition: opacity 0.4s ease;
+                text-align: center;
+            }
+    
+            .property-images-gallery img:hover + .image-description {
+                opacity: 1;
+            }
+    
+            /* Style for the date picker */
+            .date-picker {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 10px;
+            }
+    
+            .date-picker input[type="date"] {
+                padding: 5px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                width: 48%;
+            }
+    
+            /* Style for the guest selection */
+            .guest-selection {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 10px;
+            }
+    
+            .guest-selection select {
+                padding: 5px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                width: 48%;
+            }
+    
+            .guest-selection .guest-count {
+                display: flex;
+                align-items: center;
+            }
+    
+            .guest-selection .guest-count button {
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                padding: 3px 10px;
+                margin: 0 5px;
+                cursor: pointer;
+            }
+    
+            .book-button {
+                background-color: #dc3545;
+                color: #fff;
+                border: none;
+                border-radius: 5px;
+                padding: 10px 20px;
+                cursor: pointer;
+            }
+            /* Style for the description container */
+            .description-container {
+                width: 50%;
+                padding: 20px;
+                background-color: #fff;
+                border: 5px solid #55ca86;
+                border-radius: 5px;
+                margin-top:10px;
+                margin-bottom:10px;
+                
+            }
+            
 
-        .property-images-gallery {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Grid with responsive columns */
-            gap: 10px; /* Add some gap between images */
-        }
+            /* Style for the property description */
+            .property-description {
+                margin: 0;
+            }
+            .host-details-container {
+                width: 50%;
+                padding: 20px;
+                background-color: #fff;
+                border: 5px solid #55ca86;
+                border-radius: 5px;
+            }
+            
+            /* Style for the property description */
+            .host-details-container {
+                margin: 0;
+            }
 
-        .property-images-gallery img {
-            width: 400px; /* Set a fixed width for the images */
-            height: 300px; /* Set a fixed height for the images */
-            object-fit: cover; /* Ensure the aspect ratio is maintained */
-            transition: transform 0.4s ease, opacity 0.4s ease; /* Transition for hover effect */
-            cursor: pointer; /* Change cursor on hover */
-        }
-
-        .property-images-gallery img:hover {
-            transform: scale(1.1); /* Enlarge the image on hover */
-            opacity: 0.7; /* Reduce image opacity on hover to make it transparent */
-        }
-
-        .image-description {
-            position: absolute;
-            top: 50%; /* Center vertically */
-            left: 50%; /* Center horizontally */
-            transform: translate(-50%, -50%); /* Center the description text */
-            background: rgba(0, 0, 0, 0.7); /* Add a transparent background */
-            color: #fff;
-            padding: 5px;
-            border-radius: 5px;
-            font-size: 14px;
-            opacity: 0;
-            transition: opacity 0.4s ease; /* Smooth opacity transition */
-            text-align: center;
-        }
-
-        .property-images-gallery img:hover + .image-description {
-            opacity: 1; /* Show the description on image hover */
-        }
-    </style>
-</head>
-<body>
-    <h1>{{ property.property_name }}</h1>
-    <div class="property-images-container">
-        <h2>Property Images</h2>
-        <div class="property-images-gallery">
-            {% for image in images %}
-                <div class="image-container">
-                    <img src="{{ image.image.url }}" alt="Property Image">
-                    <span class="image-description">{{ image.description }}</span>
+        </style>
+    </head>
+    <body>
+        <h1>{{ property.property_name }}</h1>
+        <div class="property-details">
+            <div class="property-images-container">
+                <h2>Property Images</h2>
+                <div class="property-images-gallery">
+                    {% for image in images %}
+                        <div class="image-container">
+                            <img src="{{ image.image.url }}" alt="Property Image">
+                            <span class="image-description">{{ image.description }}</span>
+                        </div>
+                    {% endfor %}
                 </div>
-            {% endfor %}
+            </div>
+            <div class="property-booking-container">
+                <h2>Booking</h2>
+                <p>Price per night: ₹{{ property.price }}</p>
+                <div class="date-picker">
+                    <input type="date" id="checkin-date" placeholder="Check-in Date">
+                    <input type="date" id="checkout-date" placeholder="Check-out Date">
+                </div>
+                <div class="guest-selection">
+                    <select id="guest-count">
+                        <!-- Populate this select with options based on the property's capacity -->
+                    </select>
+                    <div class="guest-count">
+                        <button id="decrease-guest-count">-</button>
+                        <span id="current-guest-count">1</span>
+                        <button id="increase-guest-count">+</button>
+                    </div>
+                </div>
+                <button id="book-button" class="book-button">Book Property</button>
+            </div>
         </div>
-    </div>
-    <div>
-        <h2>Description</h2>
-        {{ property.description }}
-        <p>Location: {{ property.location }}</p>
-
-        <h2>Host Details</h2>
-        <p>Host Name: {{ host_first_name }}</p>
-        <p>Email: {{ property.host.email }}</p>
-        <!-- Add other host details as needed -->
-    </div>
-</body>
-</html>
+        <div>
+            <div class="description-container">
+                <h2 style=" font-style : oblique;">Description</h2>
+                <div class="property-description">
+                    {{ property.description }}
+                    <p>Location: {{ property.location }}</p>
+                </div></div>
+                <div class="host-details-container">
+                    <h2 style="font-style : oblique;">Host Details</h2>
+                    <p>Host Name: {{ host_first_name }}</p>
+                    <p>Email: {{ property.host.email }}</p>
+                    <!-- Add other host details as needed -->
+                </div>
+        
+    </body>
+    </html>
 {% endblock %}
