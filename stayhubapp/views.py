@@ -414,3 +414,39 @@ def search_properties(request):
 
 
     return render(request, 'search_results.html', {'properties': properties})
+
+def add_to_wishlist(request, property_id):
+    if request.user.is_authenticated:
+        property = get_object_or_404(Property, property_id=property_id)
+        user = request.user
+        # Check if the property is not already in the user's wishlist
+        if not WishlistItem.objects.filter(user=user, property=property).exists():
+            wishlist_item = WishlistItem(user=user, property=property)
+            wishlist_item.save()
+        # You can redirect to the 'view_wishlist' view after adding to the wishlist.
+        return redirect('view_wishlist')
+    # Handle the case where the user is not authenticated
+    # You can add your own logic for this case, such as redirecting to a login page.
+    return redirect('login')  # Example: redirect to the login page
+
+def view_wishlist(request):
+    if request.user.is_authenticated:
+        user = request.user
+        wishlist_items = WishlistItem.objects.filter(user=user)
+        return render(request, 'wishlist.html', {'wishlist_items': wishlist_items})
+    else:
+        return redirect('login')  # Redirect to the login page if the user is not authenticated
+
+def remove_from_wishlist(request, property_id):
+    if request.user.is_authenticated:
+        property = get_object_or_404(Property, property_id=property_id)
+        user = request.user
+        # Check if the property is in the user's wishlist and remove it
+        wishlist_item = WishlistItem.objects.filter(user=user, property=property)
+        if wishlist_item.exists():
+            wishlist_item.delete()
+        # Redirect back to the wishlist page
+        return redirect('view_wishlist')
+    # Handle the case where the user is not authenticated
+    # You can add your own logic for this case, such as redirecting to a login page.
+    return redirect('login')  # Example: redirect to the login page
