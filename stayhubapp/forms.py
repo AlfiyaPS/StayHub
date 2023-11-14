@@ -5,6 +5,9 @@ from .models import PropertyImage
 from .models import Availability
 
 
+
+
+
 class HostProfileForm(forms.ModelForm):
     class Meta:
         model = Host
@@ -20,6 +23,7 @@ class PropertyForm(forms.ModelForm):
         fields = ['property_name', 'description', 'location', 'property_type', 'number_of_bedrooms', 'number_of_bathrooms', 'capacity', 'price']
 
 class PropertyImageForm(forms.ModelForm):
+    
     class Meta:
         model = PropertyImage
         fields = ['image', 'description']  # Include the description field
@@ -29,8 +33,18 @@ class PropertyImageForm(forms.ModelForm):
         self.fields['image'].required = False
 
 
-
 class AvailabilityForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        host = kwargs.pop('host', None)
+        host_properties = kwargs.pop('host_properties', None)
+        super(AvailabilityForm, self).__init__(*args, **kwargs)
+
+        if host and host_properties:
+            self.fields['property'].queryset = host_properties.filter(host=host)
+
     class Meta:
         model = Availability
-        fields = ['date', 'is_available']
+        fields = ['property', 'date', 'is_available']
+        widgets = {
+            'date': forms.DateInput(attrs={'type': 'date'}),
+        }

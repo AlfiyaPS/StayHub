@@ -3,8 +3,6 @@ from django.urls import path
 from.import views
 from django.contrib.auth.views import PasswordResetView,PasswordResetDoneView,PasswordResetConfirmView,PasswordResetCompleteView
 
-
- 
  
 urlpatterns = [
     path('',views.index,name="home"),
@@ -38,8 +36,18 @@ urlpatterns = [
     path('edit_property/<int:property_id>/', views.edit_property, name='edit_property'),
 
     path('manage_host_approvals/', views.manage_host_approvals, name='manage_host_approvals'),    
-
+    
     path('add_availability/<int:property_id>/', views.add_availability, name='add_availability'),
 
+
+   
+
     path('property/<int:property_id>/', views.guest_property_details, name='guest_property_details'),
+
+    path('search/', views.search_properties, name='search_properties'),
+    
+    path('add_to_wishlist/<int:property_id>/', views.add_to_wishlist, name='add_to_wishlist'),
+    path('wishlist/', views.view_wishlist, name='view_wishlist'),
+    path('remove_from_wishlist/<int:property_id>/', views.remove_from_wishlist, name='remove_from_wishlist'),
 ]
+

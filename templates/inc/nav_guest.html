@@ -115,12 +115,14 @@
                 </a>
                 <div class="dropdown-menu" aria-labelledby="profileDropdown">
                     <span class="dropdown-item">{{ user.guest.guest_first_name }}</span>
-                    <div class="dropdown-divider"></div>
+                   <!-- <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="{% url 'guest_profile' %}">View Profile</a>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="{% url 'edit_guest_profile' %}">Edit Profile</a>
+                    <a class="dropdown-item" href="{% url 'edit_guest_profile' %}">Edit Profile</a>-->
                     <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{% url 'view_wishlist' %}">Wishlist</a>
                     <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+
                 
 
             </li>

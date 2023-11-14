@@ -98,6 +98,7 @@
             display: flex;
             flex-wrap: wrap;
             gap: 20px;
+            justify-content: center;
         }
         
         .property-card {
@@ -105,6 +106,7 @@
             border-radius: 5px;
             overflow: hidden;
             width: 300px;
+            
         }
         
         .property-image {
@@ -141,6 +143,36 @@
         a:hover {
             color: #50C878; /* Set your desired link color on hover */
         }
+        .search-bar {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .search-bar input[type="text"] {
+            width: 200px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        
+        .search-bar button {
+            background-color: #50C878; /* Change background color to green */
+            color: #fff; /* Change text color to white */
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        
+        .search-bar button:hover {
+            background-color: #45a049; /* Change hover background color to a different shade of green */
+        }
+        
     </style>
 	<link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
@@ -161,10 +193,11 @@
                 <div class="dropdown-menu" aria-labelledby="profileDropdown">
                     <span class="dropdown-item">{{ user.guest.guest_first_name }}</span>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="{% url 'guest_profile' %}">View Profile</a>
+                    <!--<a class="dropdown-item" href="{% url 'guest_profile' %}">View Profile</a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="{% url 'edit_guest_profile' %}">Edit Profile</a>
-                    <div class="dropdown-divider"></div>
+                    <div class="dropdown-divider"></div>-->
+                    <a class="dropdown-item" href="{% url 'view_wishlist' %}">Wishlist</a>
                     <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
                 
 
@@ -177,6 +210,13 @@
             <!-- Your header content... -->
         </header>
         <main>
+            <!-- Search bar -->
+        <form id="property-search-form" class="search-bar" action="{% url 'search_properties' %}" method="get">
+            <input type="text" id="property-name" name="name" placeholder="Property Name">
+            <input type="text" id="property-location" name="location" placeholder="Location">
+            <button type="submit">Search</button>
+        </form>
+        <center>
             <div class="property-cards">
                 {% for property in properties %}
                     <div class="property-card">
@@ -197,12 +237,13 @@
                             <div class="property-details">
                                 <h2>{{ property.property_name }}</h2>
                                 <p>{{ property.location }}</p>
-                                <p>Price: ${{ property.price }} per night</p>
+                                <p>Price: ₹{{ property.price }} per night</p>
                             </div>
                         </a>
                     </div>
                 {% endfor %}
             </div>
+        </center>
         </main>
        <script>
             // Initialize Swiper for each property card

@@ -153,7 +153,7 @@
                 <p>Number of Bedrooms: {{ property.number_of_bedrooms }}</p>
                 <p>Number of Bathrooms: {{ property.number_of_bathrooms }}</p>
                 <p>Capacity: {{ property.capacity }}</p>
-                <p>Price: ${{ property.price }}</p>
+                <p>Price: ₹{{ property.price }}</p>
             </div>
         </div>
 
@@ -173,6 +173,9 @@
         </div>
         <a href="{% url 'edit_property' property_id=property.property_id %}" class="edit-button">Edit Property</a>
         <a href="{% url 'host_dashboard' %}" class="back-button">Back</a>
+        <!-- add new property -->
+        <a href="{% url 'add_property' %}" class="add-property-button">Add New Property</a>
+
     </div>
 </body>
 </html>

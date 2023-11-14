@@ -152,10 +152,29 @@
                 margin: 0;
             }
 
+            /* Style for the "Save to Wishlist" button */
+            .wishlist-button {
+                 /* Change position to relative */
+                top: 20px; /* Adjust top property as needed */
+                right: 10px; /* Leave right property as it is */
+            }
+        
+            /* Adjust the z-index to make sure the button appears above other content if necessary */
+            .wishlist-button a {
+                z-index: 1;
+            }
+
         </style>
     </head>
     <body>
+        
         <h1>{{ property.property_name }}</h1>
+        <p>Uploaded on: {{ property.upload_datetime|date:"F j, Y, g:i a" }}</p>
+        <div class="wishlist-button">
+            <a href="{% url 'add_to_wishlist' property.property_id %}" class="btn btn-primary">
+                Save to Wishlist
+            </a>
+        </div>
         <div class="property-details">
             <div class="property-images-container">
                 <h2>Property Images</h2>
@@ -171,6 +190,7 @@
             <div class="property-booking-container">
                 <h2>Booking</h2>
                 <p>Price per night: ₹{{ property.price }}</p>
+                
                 <div class="date-picker">
                     <input type="date" id="checkin-date" placeholder="Check-in Date">
                     <input type="date" id="checkout-date" placeholder="Check-out Date">
@@ -187,7 +207,9 @@
                 </div>
                 <button id="book-button" class="book-button">Book Property</button>
             </div>
+            
         </div>
+        
         <div>
             <div class="description-container">
                 <h2 style=" font-style : oblique;">Description</h2>

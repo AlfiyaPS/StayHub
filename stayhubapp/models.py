@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-
+from django.utils import timezone
 
 from django.contrib.auth.models import AbstractUser
 
@@ -69,9 +69,11 @@ class Property(models.Model):
     number_of_bathrooms = models.PositiveIntegerField()
     capacity = models.PositiveIntegerField()
     price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    upload_datetime = models.DateTimeField(default=timezone.now)
     host = models.ForeignKey(
         Host,  # Reference the Host model directly
         on_delete=models.CASCADE,
+        related_name='properties', #for adding multiple properties
         default=None,
         null=True,
         blank=True,
@@ -86,6 +88,7 @@ class PropertyImage(models.Model):
     property = models.ForeignKey(Property, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='property_images/')
     description = models.TextField(blank=True)  # Add a description field
+    
 
     def __str__(self):
         return f"Image for {self.property.property_name}"
@@ -94,3 +97,10 @@ class Availability(models.Model):
     property = models.ForeignKey(Property, on_delete=models.CASCADE)
     date = models.DateField()
     is_available = models.BooleanField(default=True)
+
+class WishlistItem(models.Model):
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    property = models.ForeignKey(Property, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.user.username}'s wishlist item for {self.property.property_name}"

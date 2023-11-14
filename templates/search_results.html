@@ -1,0 +1,170 @@
+{% extends 'inc/nav_guest.html' %}
+
+{% block title %}Search Results{% endblock %}
+
+{% block page_content %}
+    <div class="property-cards">
+        {% if properties %}
+            <!-- Display search results -->
+            {% for property in properties %}
+                <div class="property-card">
+                    <a href="{% if property %}{% url 'guest_property_details' property_id=property.property_id %}{% else %}#{% endif %}">
+                        <div class="property-image swiper-container">
+                            <div class="swiper-wrapper">
+                                {% for image in property.propertyimage_set.all %}
+                                    <div class="swiper-slide">
+                                        <img src="{{ image.image.url }}" alt="{{ property.property_name }}">
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <div class="swiper-button-next"></div>
+                            <div class="swiper-button-prev"></div>
+                        </div>
+                        <div class="property-details">
+                            <h2>{{ property.property_name }}</h2>
+                            <p>{{ property.location }}</p>
+                            <p>Price: ₹{{ property.price }} per night</p>
+                        </div>
+                    </a>
+                </div>
+            {% endfor %}
+        {% else %}
+            <!-- Display "No results" message -->
+            <p>{{ no_results_message }}</p>
+        {% endif %}
+    </div>
+</div>
+<style>
+    /* FontAwesome Icons */
+    @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
+    /* Reset some default browser styles */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    /* Global styles */
+    body {
+        font-size: 1.1rem;
+color: #000000;
+font-weight: 600;
+letter-spacing: 0.03em;
+transition: all 0.1s ease-in-out;
+position: relative;
+padding-left: 0;
+padding-right: 0;
+    }
+
+    .navbar {
+        background-color: #fff; /* Change background color to white */
+        color: #50C878; /* Change text color to green */
+        padding: 20px;
+        display: flex;
+        justify-content: space-between;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* Add shadow to the navbar */
+    }
+
+    .menu {
+        list-style: none;
+        padding: 0;
+        display: flex;
+    }
+
+    .menu li {
+        margin-right: 20px;
+    }
+
+    .menu li a {
+        text-decoration: none;
+        color: #000; /* Change text color to green */
+        display: block;
+        transition: background-color 0.3s;
+    }
+
+    .menu li a:hover {
+        background-color: #fff; /* Change background color to white */
+        color: #50C878; /* Change text color to green on hover */
+    }
+
+    .menu li a i {
+        margin-right: 10px;
+    }
+
+    /* Main content styles */
+    .content {
+        padding: 20px;
+        
+    }
+
+    header {
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+
+    
+
+    .menu select {
+        width: 100%;
+        padding: 10px 20px;
+        background-color: #50C878; /* Change background color to green */
+        color: #fff; /* Change text color to white */
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .menu select option {
+        color: #000;
+        background-color: #fff; /* Change background color to white */
+    }
+    
+    .property-cards {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+    
+    .property-card {
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        overflow: hidden;
+        width: 300px;
+    }
+    
+    .property-image {
+        width: 100%;
+        height: 200px; /* Set a fixed height for all images */
+        overflow: hidden; /* Hide overflow to clip images */
+        position: relative; /* Needed for absolute positioning of images */
+    }
+    
+    .property-image img {
+        width: 100%;
+        height: 100%; /* Make the image cover the container */
+        object-fit: cover;
+    }
+    
+    .property-details {
+        padding: 10px;
+    }
+    
+    .property-details h2 {
+        font-size: 18px;
+        margin: 0;
+    }
+    
+    .property-details p {
+        margin: 5px 0;
+    }
+    a {
+        text-decoration: none;
+        color: #000000; /* Set your desired link color */
+    }
+
+    /* Add this CSS to change link color on hover */
+    a:hover {
+        color: #50C878; /* Set your desired link color on hover */
+    }
+</style>
+{% endblock %}

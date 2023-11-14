@@ -1,0 +1,189 @@
+{% extends 'inc/nav_guest.html' %}
+
+{% block title %}Wishlist{% endblock %}
+
+{% block page_content %}
+    <h1>Wishlist</h1>
+    <div class="property-cards">
+        {% for wishlist_item in wishlist_items %}
+            <div class="property-card" id="property-card-{{ wishlist_item.property.id }}">
+                <div class="property-image swiper-container">
+                    <div class="swiper-wrapper">
+                        {% for image in wishlist_item.property.propertyimage_set.all %}
+                            <div class="swiper-slide">
+                                <img src="{{ image.image.url }}" alt="{{ wishlist_item.property.property_name }}">
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="property-booking-container">
+                    <div class="property-details">
+                        <h2>{{ wishlist_item.property.property_name }}</h2>
+                        <p>{{ wishlist_item.property.location }}</p>
+                        <p>Price per night: ₹{{ wishlist_item.property.price }}</p>
+                    </div>
+                    <h2>Booking</h2>
+                    <div class="date-picker">
+                        <input type="date" id="checkin-date" placeholder="Check-in Date">
+                        <input type="date" id="checkout-date" placeholder="Check-out Date">
+                    </div>
+                    <div class="guest-selection">
+                        <select id="guest-count">
+                            <!-- Populate this select with options based on the property's capacity -->
+                        </select>
+                        <div class="guest-count">
+                            <button id="decrease-guest-count">-</button>
+                            <span id="current-guest-count">1</span>
+                            <button id="increase-guest-count">+</button>
+                        </div>
+                    </div>
+                    <button id="remove-button-{{ wishlist_item.property.id }}" class="remove-button" onclick="removeFromWishlist({{ wishlist_item.property.id }})">Remove</button>
+
+
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>  <!-- Close the "property-cards" div -->
+
+<style>
+    .property-cards {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+    
+    .property-card {
+        display: flex;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        overflow: hidden;
+        width: 100%;
+    }
+
+    .property-image {
+        width: 80%;
+        max-height: 300px;
+        overflow: hidden;
+    }
+
+    
+    .property-image img {
+        max-width: 100%;
+        max-height: 100%;
+    }
+
+    .property-booking-container {
+        width: 40%;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 20px;
+        background-color: #55ca86;
+    }
+    
+    .property-details {
+        padding: 10px;
+    }
+
+    .property-details h2 {
+        font-size: 18px;
+        margin: 0;
+    }
+
+    .property-details p {
+        font-size: 14px;
+        margin: 0;
+    }
+
+    .booking-container h2 {
+        color: #fff;
+    }
+
+    .date-picker {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .date-picker input[type="date"] {
+        padding: 5px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        width: 48%;
+    }
+
+    .guest-selection {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .guest-selection select {
+        padding: 5px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        width: 48%;
+    }
+
+    .guest-selection .guest-count {
+        display: flex;
+        align-items: center;
+    }
+
+    .guest-selection .guest-count button {
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 3px 10px;
+        margin: 0 5px;
+        cursor: pointer;
+    }
+
+    .remove-button {
+        background-color: #dc3545;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 20px;
+        cursor: pointer;
+    }
+</style>
+
+<script>
+    function removeFromWishlist(property_id) {
+        console.log('removeFromWishlist called with property_id:', property_id);
+        const url = `/remove_from_wishlist/${property_id}/`;
+        const csrftoken = getCookie('csrftoken');
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRFToken': csrftoken,
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Remove the item from the UI
+                const propertyCard = document.getElementById(`property-card-${property_id}`);
+                if (propertyCard) {
+                    propertyCard.remove();
+                }
+            } else {
+                console.error('Failed to remove the item from the wishlist.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
+    function getCookie(name) {
+        var value = "; " + document.cookie;
+        var parts = value.split("; " + name + "=");
+        if (parts.length == 2) return parts.pop().split(";").shift();
+    }
+</script>
+
+{% endblock %}

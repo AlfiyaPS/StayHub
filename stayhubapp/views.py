@@ -26,6 +26,12 @@ from stayhubapp.models import Property, PropertyImage
 
 from .models import Availability
 from .forms import AvailabilityForm
+
+from .models import WishlistItem
+from django.http import JsonResponse
+
+from django.views.decorators.cache import cache_control
+from django.contrib.auth import logout
 # from django.contrib import auth
 
 # Create your views here.
@@ -106,6 +112,8 @@ def registerproperty(request):
 
     return render(request, "registerproperty.html")
 
+
+
 def login(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -147,6 +155,7 @@ def login(request):
     response = render(request, 'login.html')
     response['Cache-Control'] = 'no-store, must-revalidate'
     return response
+#----------------------------
     #         messages.error(request, "Invalid username or password")
     # return render(request, "login.html")
 
@@ -188,8 +197,12 @@ def guest_dashboard(request):
 def logout(request):
     auth(request)
     return redirect('/')
+
+
+
 def services(request):
     return render(request, 'inc/services.html')
+
 def admin_dashboard(request):
     if 'username' in request.session:
         # Calculate the number of guests, hosts, and pending approvals
@@ -300,6 +313,40 @@ def guest_profile(request):
     return render(request, 'guest_profile.html', {'guest': guest})
         
   
+# @login_required
+# def add_property(request):
+#     ImageFormSet = modelformset_factory(PropertyImage, form=PropertyImageForm, extra=5, max_num=6)
+
+#     if request.method == 'POST':
+#         form = PropertyForm(request.POST)
+#         image_formset = ImageFormSet(request.POST, request.FILES, queryset=PropertyImage.objects.none())
+
+#         if form.is_valid() and image_formset.is_valid():
+#             property = form.save(commit=False)
+#             property.host = request.user.host
+#             property.save()
+
+#             for idx, image_form in enumerate(image_formset):
+#                 if image_form.cleaned_data:
+#                     image = image_form.save(commit=False)
+#                     image.property = property
+#                     image.save()
+
+#                     # Set the first uploaded image as the cover photo
+#                     if idx == 0:
+#                         property.cover_photo = image
+#                         property.save()
+
+#             return redirect('view_property', property_id=property.property_id)
+#     else:
+#         host = request.user.host
+#         initial_data = {'property_name': host.property_name}
+#         form = PropertyForm(initial=initial_data)
+#         image_formset = ImageFormSet(queryset=PropertyImage.objects.none())
+
+#     return render(request, 'add_property.html', {'form': form, 'image_formset': image_formset})
+
+#add new prop
 @login_required
 def add_property(request):
     ImageFormSet = modelformset_factory(PropertyImage, form=PropertyImageForm, extra=5, max_num=6)
@@ -324,7 +371,8 @@ def add_property(request):
                         property.cover_photo = image
                         property.save()
 
-            return redirect('view_property', property_id=property.property_id)
+            return redirect('view_property', property_id=property.property_id)  # Redirect to view_property
+
     else:
         host = request.user.host
         initial_data = {'property_name': host.property_name}
@@ -332,7 +380,6 @@ def add_property(request):
         image_formset = ImageFormSet(queryset=PropertyImage.objects.none())
 
     return render(request, 'add_property.html', {'form': form, 'image_formset': image_formset})
-
 
 def view_property(request, property_id):
     property = get_object_or_404(Property, property_id=property_id)
@@ -366,17 +413,19 @@ def edit_property(request, property_id):
 
 @login_required
 def add_availability(request, property_id):
-    property = Property.objects.get(pk=property_id)
+    property = get_object_or_404(Property, pk=property_id, host=request.user)
+
+    # Get the host properties
+    host_properties = Property.objects.filter(host=request.user)
 
     if request.method == 'POST':
-        form = AvailabilityForm(request.POST)
+        form = AvailabilityForm(request.POST, host=request.user, host_properties=host_properties)  # Pass the host and host_properties to the form
         if form.is_valid():
             form.instance.property = property
             form.save()
             return redirect('add_availability', property_id=property_id)
-
     else:
-        form = AvailabilityForm()
+        form = AvailabilityForm(host=request.user, host_properties=host_properties, initial={'property': property})
 
     availabilities = Availability.objects.filter(property=property)
     return render(request, 'add_availability.html', {
@@ -384,6 +433,9 @@ def add_availability(request, property_id):
         'form': form,
         'availabilities': availabilities,
     })
+
+
+
 
 def guest_property_details(request, property_id):
     property = get_object_or_404(Property, pk=property_id)
@@ -405,26 +457,34 @@ def guest_property_details(request, property_id):
     }
 
     return render(request, 'guest_property_details.html', context)
-
 def search_properties(request):
     name = request.GET.get('name')
     location = request.GET.get('location')
-
     properties = Property.objects.filter(property_name__icontains=name, location__icontains=location)
 
+    if not properties:
+        no_results_message = "No results matching your search."
+        return render(request, 'search_results.html', {'no_results_message': no_results_message})
 
     return render(request, 'search_results.html', {'properties': properties})
+
 
 def add_to_wishlist(request, property_id):
     if request.user.is_authenticated:
         property = get_object_or_404(Property, property_id=property_id)
         user = request.user
+
         # Check if the property is not already in the user's wishlist
         if not WishlistItem.objects.filter(user=user, property=property).exists():
             wishlist_item = WishlistItem(user=user, property=property)
             wishlist_item.save()
+
+            # Optionally, you can add a success message here
+            # messages.success(request, 'Property added to your wishlist.')
+
         # You can redirect to the 'view_wishlist' view after adding to the wishlist.
         return redirect('view_wishlist')
+
     # Handle the case where the user is not authenticated
     # You can add your own logic for this case, such as redirecting to a login page.
     return redirect('login')  # Example: redirect to the login page
@@ -439,14 +499,16 @@ def view_wishlist(request):
 
 def remove_from_wishlist(request, property_id):
     if request.user.is_authenticated:
-        property = get_object_or_404(Property, property_id=property_id)
         user = request.user
-        # Check if the property is in the user's wishlist and remove it
-        wishlist_item = WishlistItem.objects.filter(user=user, property=property)
-        if wishlist_item.exists():
+        property = get_object_or_404(Property, property_id=property_id)
+
+        try:
+            # Try to get the wishlist item and delete it
+            wishlist_item = WishlistItem.objects.get(user=user, property=property)
             wishlist_item.delete()
-        # Redirect back to the wishlist page
-        return redirect('view_wishlist')
-    # Handle the case where the user is not authenticated
-    # You can add your own logic for this case, such as redirecting to a login page.
-    return redirect('login')  # Example: redirect to the login page
+
+            return JsonResponse({'success': True})  # Return a JSON response
+        except WishlistItem.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'Property is not in the wishlist'})
+
+    return JsonResponse({'success': False, 'message': 'User is not authenticated'})

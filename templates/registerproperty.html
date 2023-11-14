@@ -11,7 +11,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f7f7f7;
+            background-color: #fff; /* Set background color to white */
             margin: 0;
             padding: 120px;
             box-sizing: border-box;
@@ -72,7 +72,7 @@
     
         button.submit-button {
             width: 100%;
-            background-color: #007BFF;
+            background-color: #4CAF50; /* Change background color to green (you can use your desired green color) */
             color: #fff;
             padding: 10px;
             border: none;
@@ -80,10 +80,6 @@
             cursor: pointer;
             font-size: 18px;
             transition: background-color 0.3s;
-        }
-    
-        button.submit-button:hover {
-            background-color: #0056b3;
         }
     
         .error-message {
@@ -97,6 +93,9 @@
                 max-width: 100%;
                 margin: 10px;
             }
+        }
+        button.submit-button:hover {
+            background-color: #45a049; /* Change hover background color to a different shade of green */
         }
     </style>
     
@@ -147,7 +146,7 @@
                 <input type="file" id="license_upload" name="license_upload" accept=".pdf, .jpg, .png" required>
             </div>
             <div class="form-group">
-                <button type="submit">Register</button>
+                <button type="submit" class="submit-button">Register</button>
             </div>
         </form>
     </div>

@@ -12,73 +12,77 @@
     <style>
         /* styles.css */
 
-/* Style the page title */
-h1 {
-    font-size: 24px;
-    color: #333;
-    margin: 20px 0;
-}
+        /* Style the page title */
+        h1 {
+            font-size: 24px;
+            color: #333;
+            margin: 20px 0;
+        }
 
-/* Style the add availability form */
-form {
-    margin: 20px 0;
-}
+        /* Style the add availability form */
+        form {
+            margin: 20px 0;
+        }
 
-/* Style the submit button */
-button {
-    background-color: #45a049;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    text-decoration: none;
-}
+        /* Style the submit button */
+        button {
+            background-color: #45a049;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+        }
 
-button:hover {
-    background-color: #3f9442;
-}
+        button:hover {
+            background-color: #3f9442;
+        }
 
-/* Style the existing availability table */
-table {
-    width: 100%;
-    border-collapse: collapse;
-}
+        /* Style the existing availability table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
 
-table, th, td {
-    border: 1px solid #ccc;
-}
+        table, th, td {
+            border: 1px solid #ccc;
+        }
 
-th, td {
-    padding: 10px;
-    text-align: left;
-}
-</style>
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+    </style>
 </head>
 <body>
-    <!-- Display property information -->
-    <h1>{{ property.name }}</h1>
+    <center>
+        <!-- Display property information -->
+        <h1>{{ property.name }}</h1>
 
-    <!-- Add availability form -->
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Add Availability</button>
-    </form>
+        <!-- Add availability form -->
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Add Availability</button>
+        </form>
 
-    <!-- Display existing availability -->
-    <h2>Existing Availability</h2>
-    <table>
+        <h2>Existing Availability</h2>
+<table>
+    <tr>
+        <th>Property Name</th>
+        <th>Date</th>
+        <th>Is Available</th>
+    </tr>
+    {% for availability in availabilities %}
         <tr>
-            <th>Date</th>
-            <th>Is Available</th>
+            <!-- Display the property name for each availability -->
+            <td>{{ availability.property.property_name }}</td>
+            <td>{{ availability.date }}</td>
+            <td>{{ availability.is_available }}</td>
         </tr>
-        {% for availability in availabilities %}
-            <tr>
-                <td>{{ availability.date }}</td>
-                <td>{{ availability.is_available }}</td>
-            </tr>
-        {% endfor %}
-    </table>
+    {% endfor %}
+</table>
+    </center>
 </body>
 </html>
 {% endblock %}
