@@ -559,17 +559,28 @@ def booking_page(request, property_id):
 
 import razorpay
 from django.conf import settings
-from django.urls import reverse
-from .forms import BookingForm
+from django.http import Http404
 
 
-def create_razorpay_order(amount, currency='INR'):
-    order = razorpay_client.order.create({
-        'amount': int(amount * 100),
-        'currency': currency,
-        'payment_capture': 1  # Auto-capture
-    })
-    return order
+def generate_razorpay_order(booking_id, total_price):
+    try:
+        payment = Payment.objects.get(booking_id=booking_id)
+    except Payment.DoesNotExist:
+        raise Http404("Payment not found for the given booking_id")
+
+    client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+    data = {
+        'amount': int(total_price * 100),  # Amount in paise
+        'currency': 'INR',
+        'payment_capture': 1,
+    }
+    order = client.order.create(data=data)
+
+    # Update the existing payment record with the razorpay_order_id
+    payment.razorpay_order_id = order['id']
+    payment.save()
+
+    return order['id']
 
 def confirm_and_pay(request, property_id):
     if request.method == 'POST':
@@ -593,73 +604,66 @@ def confirm_and_pay(request, property_id):
         # Calculate total price dynamically
         total_price = property.price * num_days
 
-        # Create a booking entry in the database
-        booking_form = BookingForm(data={
-            'property': property,
-            'check_in_date': check_in_date,
-            'check_out_date': check_out_date,
-            'num_guests': num_guests,
-            'total_price': total_price
-        })
+# Print total_price for debugging
+        print("Total Price:", total_price)
 
-        if booking_form.is_valid():
-            booking_form.save()
-        else:
-            return HttpResponse("Invalid booking form data.")
 
-        # Create a Razorpay Order
-        razorpay_order = create_razorpay_order(total_price)
+         # Save booking details to the database
+                # Save booking details to the database
+        booking = Booking.objects.create(
+            property=property,
+            check_in_date=check_in_date,
+            check_out_date=check_out_date,
+            num_guests=num_guests,
+            total_price=total_price
+        )
+        
+# Generate Razorpay order
+        razorpay_order_id = generate_razorpay_order(booking.id, total_price * 100)
 
         context = {
-            'property': property,
-            'booking': booking_form.instance,
-            'check_in_date': check_in_date,
-            'check_out_date': check_out_date,
-            'num_guests': num_guests,
-            'total_price': total_price,
-            'razorpay_order_id': razorpay_order['id'],
-            'razorpay_key_id': settings.RAZORPAY_KEY_ID,
+        'property': property,
+        'booking': booking,
+        'check_in_date': check_in_date,
+        'check_out_date': check_out_date,
+        'num_guests': num_guests,
+        'total_price': total_price,
+        'razorpay_order_id': razorpay_order_id,
         }
 
         return render(request, 'confirmation_page.html', context)
 
-    else:
-        return HttpResponse("Invalid Request")
+    
+
 def make_payment(request):
-    if request.method == 'POST':
-        # Extract payment-related information from the form or context
-        razorpay_order_id = request.POST.get('razorpay_order_id')
-        razorpay_payment_id = request.POST.get('razorpay_payment_id')
-        razorpay_signature = request.POST.get('razorpay_signature')
-        amount = request.POST.get('amount')
+    # Placeholder logic for payment processing
+    return HttpResponse("Your booking is confirmed!")
 
 
-        # Verify the payment signature
-        if not razorpay_order_id or not razorpay_payment_id or not razorpay_signature:
-            # If any of the required parameters is missing, handle the error
-            return HttpResponse("Invalid payment data. Missing required parameters.")
 
-        params_dict = {
-            'razorpay_order_id': razorpay_order_id,
-            'razorpay_payment_id': razorpay_payment_id,
-            'razorpay_signature': razorpay_signature,
+
+@login_required
+def booking_updates(request):
+    # Retrieve bookings and related information for the logged-in user
+    bookings = Booking.objects.filter(user=request.user)
+    booking_data = []
+
+    for booking in bookings:
+        payment_status = Payment.objects.filter(booking=booking).values_list('status', flat=True).first()
+
+        booking_info = {
+            'booking_id': booking.id,  # Use booking.id instead of booking.booking_id
+            'property_name': booking.property.property_name,
+            'check_in_date': booking.check_in_date,
+            'check_out_date': booking.check_out_date,
+            'payment_status': payment_status,
         }
 
-        try:
-            result = razorpay_client.utility.verify_payment_signature(params_dict)
-        except Exception as e:
-            # Log the exception or handle it appropriately
-            return HttpResponse(f"Error verifying payment signature: {str(e)}")
+        booking_data.append(booking_info)
 
-        if not result:
-            # Payment failed
-            return render(request, 'payment_failed.html')
+    context = {
+        'booking_data': booking_data,
+    }
 
-        # Payment successful, update your database or perform any necessary actions
-        return redirect('razorpay_payment_success')
+    return render(request, 'booking_updates.html', context)
 
-    return HttpResponse("Invalid request. Expected a POST request.")
-
-def razorpay_payment_success(request):
-    # You can handle additional logic here if needed
-    return render(request, 'razorpay_payment_success.html')
