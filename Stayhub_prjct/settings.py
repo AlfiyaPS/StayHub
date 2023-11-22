@@ -151,3 +151,7 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'stayhub432@gmail.com'
 EMAIL_HOST_PASSWORD = 'qjye xbvu pvaj xsjd'
+
+
+RAZORPAY_KEY_SECRET = 'U4PoS1CIj357DJa0idh3cyOk'
+RAZORPAY_KEY_ID = 'rzp_test_1taS4ppTcIcuiB'

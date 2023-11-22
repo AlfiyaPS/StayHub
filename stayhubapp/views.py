@@ -1,5 +1,9 @@
 from django.shortcuts import render,redirect, get_object_or_404
 from django.http import HttpResponse
+
+from Stayhub_prjct.settings import RAZORPAY_KEY_ID
+
+
 from .models import CustomUser
 from django.contrib import messages
 from django.contrib.auth import get_user_model
@@ -21,9 +25,13 @@ from django.contrib.auth.decorators import login_required
 
 from django.contrib.auth.decorators import user_passes_test
 from django.db.models import Q
-from stayhubapp.models import Property, PropertyImage
+from stayhubapp.models import Property, PropertyImage,Booking
+from datetime import datetime
 
-
+# views.py
+from django.views.decorators.csrf import csrf_exempt
+from django.http import HttpResponse
+from .models import Payment
 from .models import Availability
 from .forms import AvailabilityForm
 
@@ -33,8 +41,9 @@ from django.http import JsonResponse
 from django.views.decorators.cache import cache_control
 from django.contrib.auth import logout
 # from django.contrib import auth
+#################################################
+# from .models import Property, Booking , GuestBookingAvailability
 
-# Create your views here.
 
 def index(request):
     return render(request, "index.html")
@@ -183,15 +192,40 @@ def host_dashboard(request):
     else:
         return redirect('/')
 
+# def guest_dashboard(request):
+#     if 'username' in request.session:
+#         # Fetch properties along with their associated images
+#         properties = Property.objects.all()
+#         property_images = PropertyImage.objects.all()
+#         return render(request, 'guest_dashboard.html', {'properties': properties, 'property_images': property_images})
+#     else:
+#         return redirect('/')
 def guest_dashboard(request):
     if 'username' in request.session:
         # Fetch properties along with their associated images
         properties = Property.objects.all()
         property_images = PropertyImage.objects.all()
-        return render(request, 'guest_dashboard.html', {'properties': properties, 'property_images': property_images})
+        
+        # Fetch all property types
+        property_types = PropertyType.objects.all()
+
+        # Get the selected property type from the query parameters
+        selected_property_type = request.GET.get('property_type')
+
+        # Filter properties based on the selected property type
+        if selected_property_type:
+            properties = properties.filter(property_type__name=selected_property_type)
+
+        context = {
+            'properties': properties,
+            'property_images': property_images,
+            'property_types': property_types,
+            'selected_property_type': selected_property_type,
+        }
+
+        return render(request, 'guest_dashboard.html', context)
     else:
         return redirect('/')
-
     # return render(request,'guest_dashboard.html')
 
 def logout(request):
@@ -512,3 +546,120 @@ def remove_from_wishlist(request, property_id):
             return JsonResponse({'success': False, 'message': 'Property is not in the wishlist'})
 
     return JsonResponse({'success': False, 'message': 'User is not authenticated'})
+
+def booking_page(request, property_id):
+    property = get_object_or_404(Property, pk=property_id)
+
+    context = {
+        'property': property,
+        'property_id': property_id,  # Add property_id to the context
+    }
+
+    return render(request, 'booking_page.html', context)
+
+import razorpay
+from django.conf import settings
+from django.urls import reverse
+from .forms import BookingForm
+
+
+def create_razorpay_order(amount, currency='INR'):
+    order = razorpay_client.order.create({
+        'amount': int(amount * 100),
+        'currency': currency,
+        'payment_capture': 1  # Auto-capture
+    })
+    return order
+
+def confirm_and_pay(request, property_id):
+    if request.method == 'POST':
+        property = get_object_or_404(Property, pk=property_id)
+
+        check_in_date_str = request.POST.get('check_in_date')
+        check_out_date_str = request.POST.get('check_out_date')
+        num_guests = int(request.POST.get('num_guests'))
+
+        # Convert date strings to datetime objects
+        check_in_date = datetime.strptime(check_in_date_str, '%Y-%m-%d').date()
+        check_out_date = datetime.strptime(check_out_date_str, '%Y-%m-%d').date()
+
+        # Calculate the number of days
+        num_days = (check_out_date - check_in_date).days
+
+        # Validate number of guests against property capacity
+        if num_guests > property.capacity:
+            return HttpResponse("Number of guests exceeds property capacity.")
+
+        # Calculate total price dynamically
+        total_price = property.price * num_days
+
+        # Create a booking entry in the database
+        booking_form = BookingForm(data={
+            'property': property,
+            'check_in_date': check_in_date,
+            'check_out_date': check_out_date,
+            'num_guests': num_guests,
+            'total_price': total_price
+        })
+
+        if booking_form.is_valid():
+            booking_form.save()
+        else:
+            return HttpResponse("Invalid booking form data.")
+
+        # Create a Razorpay Order
+        razorpay_order = create_razorpay_order(total_price)
+
+        context = {
+            'property': property,
+            'booking': booking_form.instance,
+            'check_in_date': check_in_date,
+            'check_out_date': check_out_date,
+            'num_guests': num_guests,
+            'total_price': total_price,
+            'razorpay_order_id': razorpay_order['id'],
+            'razorpay_key_id': settings.RAZORPAY_KEY_ID,
+        }
+
+        return render(request, 'confirmation_page.html', context)
+
+    else:
+        return HttpResponse("Invalid Request")
+def make_payment(request):
+    if request.method == 'POST':
+        # Extract payment-related information from the form or context
+        razorpay_order_id = request.POST.get('razorpay_order_id')
+        razorpay_payment_id = request.POST.get('razorpay_payment_id')
+        razorpay_signature = request.POST.get('razorpay_signature')
+        amount = request.POST.get('amount')
+
+
+        # Verify the payment signature
+        if not razorpay_order_id or not razorpay_payment_id or not razorpay_signature:
+            # If any of the required parameters is missing, handle the error
+            return HttpResponse("Invalid payment data. Missing required parameters.")
+
+        params_dict = {
+            'razorpay_order_id': razorpay_order_id,
+            'razorpay_payment_id': razorpay_payment_id,
+            'razorpay_signature': razorpay_signature,
+        }
+
+        try:
+            result = razorpay_client.utility.verify_payment_signature(params_dict)
+        except Exception as e:
+            # Log the exception or handle it appropriately
+            return HttpResponse(f"Error verifying payment signature: {str(e)}")
+
+        if not result:
+            # Payment failed
+            return render(request, 'payment_failed.html')
+
+        # Payment successful, update your database or perform any necessary actions
+        return redirect('razorpay_payment_success')
+
+    return HttpResponse("Invalid request. Expected a POST request.")
+
+def razorpay_payment_success(request):
+    # You can handle additional logic here if needed
+    return render(request, 'razorpay_payment_success.html')

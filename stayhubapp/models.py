@@ -104,3 +104,35 @@ class WishlistItem(models.Model):
 
     def __str__(self):
         return f"{self.user.username}'s wishlist item for {self.property.property_name}"
+
+
+
+
+
+class Booking(models.Model):
+    
+    property = models.ForeignKey(Property, on_delete=models.CASCADE)
+    check_in_date = models.DateField()
+    check_out_date = models.DateField()
+    num_guests = models.IntegerField()
+    total_price = models.DecimalField(default=0.0, max_digits=10, decimal_places=2)
+    num_guests = models.IntegerField(default=0)
+
+    def __str__(self):
+        return f"Booking {self.booking_id} for {self.property.property_name} - {self.check_in_date} to {self.check_out_date}"
+
+class Payment(models.Model):
+    PAYMENT_STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('completed', 'Completed'),
+        ('failed', 'Failed'),
+    ]
+
+    payment_id = models.AutoField(primary_key=True)
+    booking = models.ForeignKey(Booking, on_delete=models.CASCADE)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    status = models.CharField(max_length=20, choices=PAYMENT_STATUS_CHOICES, default='pending')
+    timestamp = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"Payment for Booking {self.booking.booking_id} - {self.amount}"
