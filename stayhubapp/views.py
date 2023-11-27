@@ -652,8 +652,7 @@ def booking_updates(request):
         payment_status = Payment.objects.filter(booking=booking).values_list('status', flat=True).first()
 
         booking_info = {
-            'booking_id': b
-            ooking.id,  # Use booking.id instead of booking.booking_id
+            'booking_id': booking.id,  # Use booking.id instead of booking.booking_id
             'property_name': booking.property.property_name,
             'check_in_date': booking.check_in_date,
             'check_out_date': booking.check_out_date,
