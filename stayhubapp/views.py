@@ -582,10 +582,25 @@ def generate_razorpay_order(booking_id, total_price):
 
     return order['id']
 
-def confirm_and_pay(request, property_id):
-    if request.method == 'POST':
-        property = get_object_or_404(Property, pk=property_id)
 
+from django.shortcuts import render
+import razorpay
+from django.conf import settings
+from django.views.decorators.csrf import csrf_exempt
+from django.http import HttpResponseBadRequest
+ 
+ 
+# authorize razorpay client with API Keys.
+razorpay_client = razorpay.Client(
+    auth=(settings.RAZOR_KEY_ID, settings.RAZOR_KEY_SECRET))
+ 
+ 
+
+def confirm_and_pay(request, property_id):
+    # Fetch the Property instance using the provided property_id
+    property = get_object_or_404(Property, property_id=property_id)
+
+    if request.method == 'POST':
         check_in_date_str = request.POST.get('check_in_date')
         check_out_date_str = request.POST.get('check_out_date')
         num_guests = int(request.POST.get('num_guests'))
@@ -599,17 +614,12 @@ def confirm_and_pay(request, property_id):
 
         # Validate number of guests against property capacity
         if num_guests > property.capacity:
-            return HttpResponse("Number of guests exceeds property capacity.")
+            return HttpResponseBadRequest("Number of guests exceeds property capacity.")
 
         # Calculate total price dynamically
         total_price = property.price * num_days
 
-# Print total_price for debugging
-        print("Total Price:", total_price)
-
-
-         # Save booking details to the database
-                # Save booking details to the database
+        # Save booking details to the database
         booking = Booking.objects.create(
             property=property,
             check_in_date=check_in_date,
@@ -617,30 +627,90 @@ def confirm_and_pay(request, property_id):
             num_guests=num_guests,
             total_price=total_price
         )
-        
-# Generate Razorpay order
-        razorpay_order_id = generate_razorpay_order(booking.id, total_price * 100)
 
+        # Create a Razorpay Order
+        razorpay_order = razorpay_client.order.create(dict(
+            amount=int(total_price * 100),  # Convert total_price to paise
+            currency='INR',
+            payment_capture='0'
+        ))
+
+        # Order ID of the newly created order
+        razorpay_order_id = razorpay_order['id']
+        callback_url = 'paymenthandler/'
+
+        # Pass these details to the frontend
         context = {
-        'property': property,
-        'booking': booking,
-        'check_in_date': check_in_date,
-        'check_out_date': check_out_date,
-        'num_guests': num_guests,
-        'total_price': total_price,
-        'razorpay_order_id': razorpay_order_id,
-        }
+            'property': property,
+            'check_in_date': check_in_date,
+            'check_out_date': check_out_date,
+            'num_guests': num_guests,
+            'total_price': total_price,
+            'razorpay_order_id': razorpay_order_id,
+            'razorpay_merchant_key': settings.RAZOR_KEY_ID,
+            'currency': 'INR',
+            'callback_url': callback_url,
+}
 
-        return render(request, 'confirmation_page.html', context)
+    return render(request, 'confirmation_page.html', context=context)
 
-    
-
-def make_payment(request):
-    # Placeholder logic for payment processing
-    return HttpResponse("Your booking is confirmed!")
-
-
-
+    return HttpResponseBadRequest("Invalid request method")
+ 
+ 
+# we need to csrf_exempt this url as
+# POST request will be made by Razorpay
+# and it won't have the csrf token.
+@csrf_exempt
+def paymenthandler(request):
+ 
+    # only accept POST request.
+    if request.method == "POST":
+        try:
+           
+            # get the required parameters from post request.
+            payment_id = request.POST.get('razorpay_payment_id', '')
+            razorpay_order_id = request.POST.get('razorpay_order_id', '')
+            signature = request.POST.get('razorpay_signature', '')
+            params_dict = {
+                'razorpay_order_id': razorpay_order_id,
+                'razorpay_payment_id': payment_id,
+                'razorpay_signature': signature
+            }
+ 
+            # verify the payment signature.
+            result = razorpay_client.utility.verify_payment_signature(
+                params_dict)
+            if result is not None:
+                amount = 20000  # Rs. 200
+                try:
+ 
+                    # capture the payemt
+                    razorpay_client.payment.capture(payment_id, amount)
+                    # update payment status to 'completed'
+                    payment = Payment.objects.get(razorpay_payment_id=payment_id)
+                    payment.status = 'completed'
+                    payment.razorpay_order_id = razorpay_order_id
+                    payment.razorpay_payment_id = payment_id
+                    payment.save()
+ 
+                    # render success page on successful caputre of payment
+                    return render(request, 'paymentsuccess.html')
+                except Exception as e:
+                    print(e)
+                    # if there is an error while capturing payment.
+                    return render(request, 'paymentfail.html')
+            else:
+ 
+                # if signature verification fails.
+                return render(request, 'paymentfail.html')
+        except Exception as e:
+            print(e)
+ 
+            # if we don't find the required parameters in POST data
+            return HttpResponseBadRequest()
+    else:
+       # if other than POST request is made.
+        return HttpResponseBadRequest()
 
 @login_required
 def booking_updates(request):
@@ -666,4 +736,36 @@ def booking_updates(request):
     }
 
     return render(request, 'booking_updates.html', context)
+
+from django.http import JsonResponse
+
+# Add this view to handle property activation
+@login_required
+def activate_property(request, property_id):
+    if request.user.is_authenticated and hasattr(request.user, 'host') and request.user.host.is_host:
+        host = request.user.host
+        try:
+            property = Property.objects.get(pk=property_id, host=host)
+            property.status = 'Activate'
+            property.save()
+            return JsonResponse({'status': 'success'})
+        except Property.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Property not found'})
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Authentication failed'})
+
+# Add this view to handle property deactivation
+@login_required
+def deactivate_property(request, property_id):
+    if request.user.is_authenticated and hasattr(request.user, 'host') and request.user.host.is_host:
+        host = request.user.host
+        try:
+            property = Property.objects.get(pk=property_id, host=host)
+            property.status = 'Deactivate'
+            property.save()
+            return JsonResponse({'status': 'success'})
+        except Property.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Property not found'})
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Authentication failed'})
 
