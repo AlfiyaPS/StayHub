@@ -1,0 +1,11 @@
+<!-- paymentsuccess.html -->
+{% extends 'base.html' %}
+
+{% block title %}Payment Successful{% endblock %}
+
+{% block content %}
+  <h2>Payment Successful</h2>
+  <p>Your payment was successful. Thank you for booking with us!</p>
+
+  <a href="{% url 'download_receipt' %}">Download Receipt</a>
+{% endblock %}
