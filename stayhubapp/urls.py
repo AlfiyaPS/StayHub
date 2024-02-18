@@ -49,5 +49,9 @@ urlpatterns = [
     path('add_to_wishlist/<int:property_id>/', views.add_to_wishlist, name='add_to_wishlist'),
     path('wishlist/', views.view_wishlist, name='view_wishlist'),
     path('remove_from_wishlist/<int:property_id>/', views.remove_from_wishlist, name='remove_from_wishlist'),
+
+    path('add_service/', add_service, name='add_service'),
+    path('view_services/', view_services, name='view_services'),
+    path('service_details/<str:service_id>/', service_details, name='service_details'),
 ]
 
