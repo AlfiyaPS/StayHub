@@ -58,3 +58,49 @@ class BookingForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(BookingForm, self).__init__(*args, **kwargs)
+
+class GuideRegistrationForm(forms.ModelForm):
+    class Meta:
+        model = Guide
+        fields = ['guide_first_name', 'guide_last_name', 'username', 'password', 'email', 'phone_number', 'profilePicture', 'gender','location','bio','languages_spoken']
+        widgets = {
+            'password': forms.PasswordInput(),
+        }
+
+    profilePicture = forms.ImageField(label='Profile Picture', required=True)
+
+
+
+from .models import Guide
+
+class GuideEditForm(forms.ModelForm):
+    class Meta:
+        model = Guide
+        fields = ['guide_first_name', 'guide_last_name', 'phone_number', 'gender', 'profilePicture','location','bio','languages_spoken']
+    def __init__(self, *args, **kwargs):
+        super(GuideEditForm, self).__init__(*args, **kwargs)
+        # Set initial values for the form fields
+        self.fields['guide_first_name'].initial = self.instance.guide_first_name
+        self.fields['guide_last_name'].initial = self.instance.guide_last_name
+        self.fields['phone_number'].initial = self.instance.phone_number
+        self.fields['gender'].required = False
+        self.fields['location'].initial = self.instance.location
+        self.fields['bio'].initial = self.instance.bio
+        self.fields['languages_spoken'].initial = self.instance.languages_spoken
+    # Use FileInput instead of ClearableFileInput
+    profilePicture = forms.ImageField(
+        label='Profile Picture',
+        required=False,
+        widget=forms.FileInput(attrs={'accept': 'image/*'})  # Specify accepted file types if needed
+    )
+
+from .models import AddService
+
+class AddServiceForm(forms.ModelForm):
+    class Meta:
+        model = AddService
+        fields = '__all__'
+        widgets = {
+            'service_type': forms.Select(attrs={'class': 'form-control'}),
+            'features': forms.CheckboxSelectMultiple,
+        }
