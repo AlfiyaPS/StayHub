@@ -1,0 +1,148 @@
+{% extends 'guide_dashboard.html' %}
+{% load static %}
+{% block title %}Add Service{% endblock %}
+{% block page_content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: url('{% static "/img/map.jpeg" %}') center center no-repeat fixed;
+            background-size: contain;
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            backdrop-filter: blur(1px);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        form {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: 20px auto;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #3498db;
+            color: #fff;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            resize: vertical; /* Allow vertical resizing of the textarea */
+        }
+    
+        /* Additional styles for the description text area */
+        label[for="id_description"] {
+            margin-top: 20px; /* Adjust the margin as needed */
+        }
+    
+        #id_features {
+            margin-top: 10px; /* Adjust the margin as needed */
+        }
+    
+        #id_features label {
+            display: block; /* Display the label and checkbox on separate lines */
+            margin-top: 10px;
+            margin-bottom: 5px; /* Adjust the bottom margin as needed */
+            font-weight: normal;
+            color: #555;
+        }
+    
+        #id_features input[type="checkbox"] {
+            margin-top: -20px; /* Adjust the top margin as needed to align with the label */
+            margin-right: 5px; /* Adjust the right margin as needed */
+            /* You can also use margin-left if you prefer */
+        }
+    </style>
+   
+    <h1><center>Add Service</center></h1>
+    <form method="post" action="{% url 'add_service' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <label for="id_service_name">Service Name:</label>
+        {{ form.service_name }}
+        <br>
+
+        <label for="id_description">Description:</label>
+        {{ form.description }}
+        <br>
+
+        <label for="id_price_per_person">Price per person:</label>
+        {{ form.price_per_person }}
+        <br>
+
+        <label for="id_duration">Duration (minutes):</label>
+        {{ form.duration }}
+        <br>
+
+        <label for="id_place">Place:</label>
+        {{ form.place }}
+        <br>
+
+        <label for="id_city">City:</label>
+        {{ form.city }}
+        <br>
+
+        <label for="id_state">State:</label>
+        {{ form.state }}
+        <br>
+
+        <label for="id_country">Country:</label>
+        {{ form.country }}
+        <br>
+
+        <label for="id_service_type">Service Type:</label>
+        {{ form.service_type }}
+        <br>
+
+        <label for="id_features">Features:</label>
+        {{ form.features }}
+        <br>
+
+        <label for="id_images">Images:</label>
+        {{ form.images }}
+        <br>
+
+        <button type="submit">Add Service</button>
+    </form>
+{% endblock %}
