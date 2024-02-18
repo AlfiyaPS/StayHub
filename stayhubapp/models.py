@@ -136,3 +136,44 @@ class Payment(models.Model):
 
     def __str__(self):
         return f"Payment for Booking {self.booking.booking_id} - {self.amount}"
+    
+from django.utils.crypto import get_random_string
+
+class Feature(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+
+    def __str__(self):
+        return self.name
+        
+
+class AddService(models.Model):
+    TYPE_CHOICES = [
+        ('adventurous', 'Adventurous'),
+        ('picnic', 'Picnic'),
+        ('cultural', 'Cultural'),
+        ('music_concerts', 'Music/Concerts'),
+    ]
+
+    service_id = models.CharField(max_length=50, unique=True, editable=False)
+    service_name = models.CharField(max_length=255)
+    description = models.TextField(blank=True, null=True)
+    price_per_person = models.DecimalField(max_digits=10, decimal_places=2)
+    duration = models.IntegerField()  # Duration in minutes
+    place = models.CharField(max_length=255)
+    city = models.CharField(max_length=255)
+    state = models.CharField(max_length=255)
+    country = models.CharField(max_length=255)
+    service_type = models.CharField(max_length=20, choices=TYPE_CHOICES, default='adventurous')
+    features = models.ManyToManyField(Feature, related_name='services', blank=True)
+    images = models.ImageField(upload_to='service_images/', null=True, blank=True)
+
+    def __str__(self):
+        return self.service_name
+    
+    def save(self, *args, **kwargs):
+        # Generate a unique service ID if it doesn't exist
+        if not self.service_id:
+            unique_id = get_random_string(length=8)
+            self.service_id = f'SRV-{unique_id}'
+        super().save(*args, **kwargs)
+    
