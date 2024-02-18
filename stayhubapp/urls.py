@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.urls import path
 from.import views
 from django.contrib.auth.views import PasswordResetView,PasswordResetDoneView,PasswordResetConfirmView,PasswordResetCompleteView
-
+from .views import add_service, view_services,service_details
  
 urlpatterns = [
     path('',views.index,name="home"),
