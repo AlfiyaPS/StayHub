@@ -769,3 +769,31 @@ def deactivate_property(request, property_id):
     else:
         return JsonResponse({'status': 'error', 'message': 'Authentication failed'})
 
+from django.urls import reverse  # Import the reverse function to generate URLs
+
+
+from .models import Guide
+
+
+from django.shortcuts import render, redirect
+from .models import AddService
+from .forms import AddServiceForm
+
+def add_service(request):
+    if request.method == 'POST':
+        form = AddServiceForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('view_services')  # Change 'view_services' to your actual view name
+    else:
+        form = AddServiceForm()
+    
+    return render(request, 'add_service.html', {'form': form})
+
+def view_services(request):
+    services = AddService.objects.all()
+    return render(request, 'view_services.html', {'services': services})
+
+def service_details(request,service_id): 
+    service = get_object_or_404(AddService, service_id=service_id)
+    return render(request, "service_details.html")
