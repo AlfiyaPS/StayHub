@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Service Details</title>
+</head>
+<body>
+    <h1>{{ service.service_name }} Details</h1>
+    <ul>
+        <li><strong>Service ID:</strong> {{ service.service_id }}</li>
+        <li><strong>Description:</strong> {{ service.description }}</li>
+        <li><strong>Price per Person:</strong> {{ service.price_per_person }}</li>
+        <li><strong>Duration:</strong> {{ service.duration }} minutes</li>
+        <li><strong>Place:</strong> {{ service.place }}</li>
+        <li><strong>City:</strong> {{ service.city }}</li>
+        <li><strong>State:</strong> {{ service.state }}</li>
+        <li><strong>Country:</strong> {{ service.country }}</li>
+        <li><strong>Features:</strong>
+            <ul>
+                {% for feature in service.features.all %}
+                    <li>{{ feature.name }}</li>
+                {% endfor %}
+            </ul>
+        </li>
+    </ul>
+    {% if service.images %}
+        <img src="{{ service.images.url }}" alt="Service Image">
+    {% endif %}
+    <a href="{% url 'view_services' %}">Back to View Services</a>
+</body>
+</html>
