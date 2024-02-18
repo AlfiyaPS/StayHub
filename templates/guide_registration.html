@@ -1,0 +1,141 @@
+{% extends 'layouts/main.html' %}
+{% load static %}
+{% block body %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Guide Registration</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        h2 {
+            color: #333;
+        }
+
+        form {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        input[type="file"] {
+            margin-top: 8px;
+        }
+
+        .service-section {
+            border-top: 1px solid #ccc;
+            margin-top: 20px;
+            padding-top: 20px;
+        }
+
+        .service-fields {
+            margin-bottom: 16px;
+        }
+
+        .photo-upload {
+            margin-top: 8px;
+        }
+
+        button {
+            background-color: #4caf50;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        hr {
+            border: 0;
+            height: 1px;
+            background: #ccc;
+            margin-top: 16px;
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2><center>Travel Guide Registration</center></h2>
+
+    <form method="post" action="{% url 'guide_registration' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <h2><center>Travel Guide Registration</center></h2>
+        <!-- Personal Information -->
+        <label for="guide_first_name">First Name:</label>
+        <input type="text" name="guide_first_name" required>
+
+        <label for="guide_last_name">Last Name:</label>
+        <input type="text" name="guide_last_name" required>
+
+        <label for="username">Username:</label>
+        <input type="text" name="username" required>
+
+        <label for="password">Password:</label>
+        <input type="password" name="password" required>
+
+        <label for="email">Email:</label>
+        <input type="email" name="email" required>
+
+        <label for="phone_number">Phone Number:</label>
+        <input type="text" name="phone_number" required>
+
+        <label for="profilePicture">Profile Picture:</label>
+        <input type="file" id="profilePicture" name="profilePicture" accept="image/*" required>
+
+        <label for="gender">Gender:</label>
+        <select id="gender" name="gender" required>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+        </select>
+        <label for="location">Location:</label>
+        <input type="text" id="location" name="location" required>
+        <label for="bio">Bio:</label>
+        <textarea class="bio" id="bio" name="bio" rows="4"></textarea>
+        <label for="languages_spoken">Languages :</label>
+        <input type="text" id="languages_spoken" name="languages_spoken" required>
+        
+        <button type="submit">Register</button>
+    </form>
+
+    
+
+</body>
+
+</html>
+{% endblock body %}
