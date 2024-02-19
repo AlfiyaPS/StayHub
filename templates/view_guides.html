@@ -1,0 +1,70 @@
+{% extends 'inc/nav_admin.html' %}
+
+{% block title %}View Guides{% endblock %}
+
+{% block page_content %}
+    <center><h1>View Guides</h1></center>
+
+    <table class="guide-table">
+        <thead>
+            <tr>
+                <th>Guide Name</th>
+                <th>Location</th>
+                <th>Email</th>
+                <th>Phone Number</th>
+                <th>Gender</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for guide in guides %}
+            <tr>
+                <td>{{ guide.guide_first_name }} {{ guide.guide_last_name }}</td>
+                <td>{{ guide.location }}</td>
+                <td>{{ guide.email }}</td>
+                <td>{{ guide.phone_number }}</td>
+                <td>{{ guide.gender }}</td>
+                <td>
+                    <a href="{% url 'delete_guide' guide.id %}" class="delete-btn">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <style>
+        .guide-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .guide-table th, .guide-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .guide-table th {
+            background-color: #f2f2f2;
+        }
+
+        .guide-table tbody tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .delete-btn {
+            background-color: #dc3545;
+            color: #fff;
+            padding: 8px 12px;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            cursor: pointer;
+        }
+
+        .delete-btn:hover {
+            background-color: #c82333;
+        }
+    </style>
+{% endblock %}

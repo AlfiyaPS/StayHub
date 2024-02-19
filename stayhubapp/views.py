@@ -286,7 +286,9 @@ def view_hosts(request):
 def view_guests(request):
     guests = Guest.objects.all()
     return render(request, 'view_guests.html', {'guests': guests})
-
+def view_guides(request):
+    guides = Guide.objects.all()
+    return render(request, 'view_guides.html', {'guides': guides})
 def delete_guest(request, guest_id):
     try:
         guest = Guest.objects.get(id=guest_id)
