@@ -1,0 +1,62 @@
+{% extends 'inc/nav_guests.html' %}
+
+{% block title %}Guide display{% endblock %}
+
+{% block page_content %}
+<style>
+    h1{
+        color:green;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .guide-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Flexible grid columns */
+        gap: 20px;
+        justify-content: center;
+      }
+      
+      .guide-card {
+        background-color: white;
+        border: 1px solid #ccc; /* Adjust border color as needed */
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+        overflow: hidden; /* Hide overflowing content */
+      }
+      
+      .guide-card img {
+        width: 100%;
+        height: 300px; /* Adjust height as needed */
+        object-fit: cover; /* Maintain aspect ratio */
+      }
+      
+      .guide-card h2 {
+        font-size: 20px;
+        margin: 10px 0;
+        text-align: center;
+      }
+      
+      .guide-card p {
+        margin: 5px 0;
+        text-align: center;
+      }
+      
+    
+</style>
+<b><center><h1>Travel Guides</h1></center></b>
+
+<div class="guide-cards">
+    {% for guide in guides %}
+        <div class="guide-card">
+            {% if guide.profilePicture %}
+                <img src="{{ guide.profilePicture.url }}" alt="{{ guide.name }}">
+            {% else %}
+                <p>No image available</p>
+            {% endif %}
+            <p> {{ guide.guide_first_name }} {{ guide.guide_last_name }}</p>
+            <p>{{ guide.location }}</p>
+            <p>{{ guide.email }}</p>
+            <p>{{ guide.phone_number }}</p>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}
