@@ -1,0 +1,141 @@
+{% extends 'inc/nav_guests.html' %}
+
+{% block title %}View Service Booking{% endblock %}
+
+{% block page_content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Bookings</title>
+    <style>
+        /* Existing styles */
+        .service-container {
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin-bottom: 20px;
+            width: 400px;
+            margin-right: 100px;
+        }
+        .service-container img {
+            max-width: 100%;
+            height: auto;
+        }
+        .completed-button {
+            background-color: green;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: default;
+        }
+        .review-form {
+            margin-top: 10px;
+            display: none; /* Initially hide the review form */
+        }
+        .review-form textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            resize: vertical;
+        }
+        .review-form button[type="submit"] {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .review-form button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+        .toggle-review-button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .toggle-review-button:hover {
+            background-color: #0056b3;
+        }
+        /* New styles for star rating */
+        .star-rating {
+            unicode-bidi: bidi-override;
+            direction: rtl;
+            text-align: center;
+        }
+        .star-rating input[type="radio"] {
+            display: none;
+        }
+        .star-rating label {
+            color: #ddd;
+            font-size: 40px;
+            padding: 0 5px;
+            display: inline-block;
+            cursor: pointer;
+        }
+        .star-rating input[type="radio"]:checked ~ label {
+            color: #f7d419;
+        }
+    </style>
+</head>
+<body>
+    <center><h1>My Bookings</h1></center>
+    <div>
+        <div style="display: flex; flex-wrap: wrap;">
+            {% for payment in user_payments %}
+            <div class="service-container">
+                <img src="{{ payment.booking.service.images.url }}" alt="{{ payment.booking.service.service_name }} Image">
+                <h2>{{ payment.booking.service.service_name }}</h2>
+                <p>Amount Paid: {{ payment.amount_paid }}</p>
+                <p>Payment Date: {{ payment.payment_date }}</p>
+                <!-- Add more details as needed -->
+                <button class="completed-button" disabled>Payment Completed</button>
+                <!-- Review Form -->
+                <button class="toggle-review-button">Add Review</button> <!-- Add a button to toggle the review form -->
+                <form class="review-form" method="POST" action="{% url 'add_review' service_id=payment.booking.service.id %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="service_id" value="{{ payment.booking.service.id }}">
+                    <div class="star-rating">
+                        <input type="radio" id="star5" name="rating" value="5"><label for="star5">&#9733;</label>
+                        <input type="radio" id="star4" name="rating" value="4"><label for="star4">&#9733;</label>
+                        <input type="radio" id="star3" name="rating" value="3"><label for="star3">&#9733;</label>
+                        <input type="radio" id="star2" name="rating" value="2"><label for="star2">&#9733;</label>
+                        <input type="radio" id="star1" name="rating" value="1"><label for="star1">&#9733;</label>
+                    </div>
+                    <textarea name="review" rows="4" cols="30" placeholder="Write your review"></textarea><br>
+                    <button type="submit">Submit Review</button>
+                </form>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- JavaScript to toggle the review form visibility -->
+    <script>
+        document.querySelectorAll('.toggle-review-button').forEach(button => {
+            button.addEventListener('click', function() {
+                const reviewForm = this.nextElementSibling; // Get the next sibling element (the review form)
+                reviewForm.style.display = reviewForm.style.display === 'none' ? 'block' : 'none'; // Toggle display
+            });
+        });
+    </script>
+
+    <!-- Display success and error messages -->
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</body>
+</html>
+{% endblock %}
