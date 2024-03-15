@@ -348,7 +348,76 @@ def guest_profile(request):
     guest = request.user.guest
     return render(request, 'guest_profile.html', {'guest': guest})
         
-  
+from .forms import ServiceBookingForm
+from .models import Review
+def service_booking(request, service_id):
+    service = AddService.objects.get(service_id=service_id)
+    if request.method == 'POST':
+        form = ServiceBookingForm(request.POST)
+        if form.is_valid(): 
+            booking = form.save(commit=False)
+            booking.service = service
+            booking.guest = request.user.guest
+            booking.save()
+            return redirect('booking_status', booking_id=booking.booking_id)
+        else:
+            print(form.errors)
+    else:
+        form = ServiceBookingForm()
+
+    return render(request, 'service_booking.html', {'service': service, 'form': form})
+
+from django.shortcuts import get_object_or_404, render
+from .models import ServiceBooking
+
+def booking_status(request, booking_id):
+    booking = get_object_or_404(ServiceBooking, booking_id=booking_id)
+    amount_in_paise = booking.service.price_per_person * 100
+    return render(request, 'booking_status.html', {'booking': booking, 'amount_in_paise': amount_in_paise})
+
+
+def payment_success(request, booking_id):
+    booking = ServiceBooking.objects.get(booking_id)  # Replace with your actual function to get the booking details
+    return render(request, 'payment_success.html', {'booking': booking})
+def view_servicebookings(request):
+    bookings = ServiceBooking.objects.filter(guest=request.user.guest)
+    return render(request, 'view_servicebooking.html', {'bookings': bookings})
+
+def guide_service_booking(request):
+    # Fetch all bookings for the logged-in guide
+    guide_bookings = ServiceBooking.objects.filter(service__guide=request.user.guide)
+
+    context = {
+        'guide_bookings': guide_bookings,
+    }
+
+    return render(request, 'guide_service_booking.html', context)
+from .models import ServicePayment
+
+from .forms import ReviewForm
+
+def viewmyservices(request):
+    user_payments = ServicePayment.objects.filter(booking__guest=request.user.guest)
+    form = ReviewForm()
+    return render(request, 'viewmyservices.html', {'form': form, 'user_payments': user_payments})
+
+def add_review(request, service_id):
+    if request.method == 'POST':
+        form = ReviewForm(request.POST)
+        if form.is_valid():
+            review = form.save(commit=False)
+            review.service_id = service_id
+            review.guest = request.user.guest
+            review.save()
+            messages.success(request, 'Review added successfully!')
+            return redirect('viewmyservices')
+        else:
+            print(form.errors)  # Print form errors for debugging
+            messages.error(request, 'Failed to add review. Please check your inputs.')
+    else:
+        messages.error(request, 'Invalid request method.')
+
+    return redirect('viewmyservices')
 # @login_required
 # def add_property(request):
 #     ImageFormSet = modelformset_factory(PropertyImage, form=PropertyImageForm, extra=5, max_num=6)
