@@ -104,3 +104,20 @@ class AddServiceForm(forms.ModelForm):
             'service_type': forms.Select(attrs={'class': 'form-control'}),
             'features': forms.CheckboxSelectMultiple,
         }
+
+from .models import ServiceBooking
+
+class ServiceBookingForm(forms.ModelForm):
+    class Meta:
+        model = ServiceBooking
+        fields = ['booking_date', 'number_of_guests', 'additional_request', 'total_price']
+
+from .models import Review
+
+class ReviewForm(forms.ModelForm):
+    class Meta:
+        model = Review
+        fields = ['rating', 'comment']
+        widgets = {
+            'comment': forms.Textarea(attrs={'rows': 4, 'cols': 30, 'placeholder': 'Write your review'}),
+        }
