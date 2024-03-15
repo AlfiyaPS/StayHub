@@ -176,4 +176,56 @@ class AddService(models.Model):
             unique_id = get_random_string(length=8)
             self.service_id = f'SRV-{unique_id}'
         super().save(*args, **kwargs)
+class ServicePayment(models.Model):
+    payment_id = models.AutoField(primary_key=True)
+    booking = models.OneToOneField('ServiceBooking', on_delete=models.CASCADE)
+    amount_paid = models.DecimalField(max_digits=10, decimal_places=2)
+    payment_date = models.DateTimeField(auto_now_add=True)
+    PAYMENT_STATUS_CHOICES = [
+        ('completed', 'Completed'),
+        ('not_completed', 'Not Completed'),
+    ]
+
+    status = models.CharField(max_length=20, choices=PAYMENT_STATUS_CHOICES, default='completed')
+    def __str__(self):
+        return f"Payment ID: {self.payment_id}, Booking ID: {self.booking.booking_id}, Amount Paid: {self.amount_paid}, Date: {self.payment_date}"
     
+# class ServiceBooking(models.Model):
+#     booking_id = models.AutoField(primary_key=True)
+#     service = models.ForeignKey('AddService', on_delete=models.CASCADE) 
+#     guest = models.ForeignKey(Guest, on_delete=models.CASCADE)
+#     booking_date = models.DateField()
+#     number_of_guests = models.PositiveIntegerField()
+#     additional_request = models.TextField(blank=True, null=True)
+#     total_price = models.DecimalField(max_digits=10, decimal_places=2)
+#     def create_payment(self):
+#     # Create a payment record associated with this booking
+#         ServicePayment.objects.create(booking=self, amount_paid=self.total_price)
+#     def save(self, *args, **kwargs):
+#         # Call the parent class's save method
+#         super().save(*args, **kwargs)
+        
+#         # Create a payment record after saving the booking
+#         self.create_payment()
+#     def __str__(self):
+#         return f"Booking ID: {self.booking_id}, Service: {self.service.service_name}, Guests: {self.number_of_guests}, Date: {self.booking_date}"
+    
+class ServiceBooking(models.Model):
+    booking_id = models.AutoField(primary_key=True)
+    service = models.ForeignKey('AddService', on_delete=models.CASCADE) 
+    guest = models.ForeignKey(Guest, on_delete=models.CASCADE)
+    booking_date = models.DateField()
+    number_of_guests = models.PositiveIntegerField()
+    additional_request = models.TextField(blank=True, null=True)
+    total_price = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"Booking ID: {self.booking_id}, Service: {self.service.service_name}, Guests: {self.number_of_guests}, Date: {self.booking_date}"
+class Review(models.Model):
+    guest = models.ForeignKey(Guest, on_delete=models.CASCADE)
+    service_id = models.IntegerField()  # Assuming service_id is an integer field
+    rating = models.IntegerField()  # Assuming rating is an integer field representing out of 5
+    comment = models.TextField(blank=True)
+
+    def __str__(self):
+        return f"Review by {self.guest} for Service ID: {self.service_id}"
