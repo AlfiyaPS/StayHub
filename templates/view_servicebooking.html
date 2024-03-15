@@ -1,0 +1,101 @@
+{% extends 'inc/nav_guests.html' %}
+
+{% block title %}view Service Booking{% endblock %}
+
+{% block page_content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Service Bookings</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            text-align: center;
+            color: #50C878;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #50C878;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        img {
+            max-width: 100px;
+            max-height: 100px;
+            display: block;
+            margin: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>View Service Bookings</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Booking ID</th>
+                <th>Service Name</th>
+                <th>Guide Name</th>
+                <th>Location</th>
+                <th>Price</th>
+                <th>Date of Booking</th>
+                <th>Number of Persons</th>
+                <th>Status</th>
+                <!-- Add more columns as needed -->
+            </tr>
+        </thead>
+        <tbody>
+            {% for booking in bookings %}
+                <tr>
+                    <td>{{ booking.booking_id }}</td>
+                    <td>{{ booking.service.service_name }}</td>
+                    <td>{{ booking.service.guide.guide_first_name }} {{ booking.service.guide.guide_last_name }}</td>
+                    <td>{{ booking.service.place }}</td>
+                    <td>₹{{ booking.total_price }}</td>
+                    <td>{{ booking.booking_date }}</td>
+                    <td>{{ booking.number_of_guests }}</td>
+                    <td>
+                        {% if booking.servicepayment %}
+                            {% if booking.servicepayment.status == 'completed' %}
+                                Payment Completed
+                            {% else %}
+                                Payment Not Completed
+                            {% endif %}
+                        {% else %}
+                            Payment Not Completed
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
+{% endblock %}
