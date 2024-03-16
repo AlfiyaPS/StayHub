@@ -1,7 +1,5 @@
 {% extends 'inc/nav_guests.html' %}
-
 {% block title %}View Service Booking{% endblock %}
-
 {% block page_content %}
 <!DOCTYPE html>
 <html lang="en">
@@ -84,6 +82,76 @@
         .star-rating input[type="radio"]:checked ~ label {
             color: #f7d419;
         }
+
+        /* Modal styles */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto; /* 15% from the top and centered */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%; /* Could be more or less, depending on screen size */
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Styles for modal content */
+        .modal-content h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .modal-content p {
+            font-size: 16px;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+
+        .modal-content .review-item {
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 20px;
+        }
+
+        .modal-content .review-item:last-child {
+            border-bottom: none;
+        }
+        #view-reviews-btn {
+            background-color: #EE4B2B;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px; /* Adjust margin as needed */
+        }
+    
+        #view-reviews-btn:hover {
+            background-color: #D22B2B;
+        }
     </style>
 </head>
 <body>
@@ -98,8 +166,12 @@
                 <p>Payment Date: {{ payment.payment_date }}</p>
                 <!-- Add more details as needed -->
                 <button class="completed-button" disabled>Payment Completed</button>
+                <div>
+                    <button id="view-reviews-btn">View My Reviews</button>
+                </div>
                 <!-- Review Form -->
                 <button class="toggle-review-button">Add Review</button> <!-- Add a button to toggle the review form -->
+                
                 <form class="review-form" method="POST" action="{% url 'add_review' service_id=payment.booking.service.id %}">
                     {% csrf_token %}
                     <input type="hidden" name="service_id" value="{{ payment.booking.service.id }}">
@@ -110,14 +182,26 @@
                         <input type="radio" id="star2" name="rating" value="2"><label for="star2">&#9733;</label>
                         <input type="radio" id="star1" name="rating" value="1"><label for="star1">&#9733;</label>
                     </div>
-                    <textarea name="review" rows="4" cols="30" placeholder="Write your review"></textarea><br>
+                    <textarea name="reviewcomment" rows="4" cols="30" placeholder="Write your review"></textarea><br>
                     <button type="submit">Submit Review</button>
                 </form>
             </div>
+            
             {% endfor %}
+            
         </div>
     </div>
-
+    
+    <div id="review-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Your Reviews</h2>
+            <div id="review-list">
+                <!-- Reviews will be displayed here -->
+            </div>
+        </div>
+    </div>
+    
     <!-- JavaScript to toggle the review form visibility -->
     <script>
         document.querySelectorAll('.toggle-review-button').forEach(button => {
@@ -125,6 +209,27 @@
                 const reviewForm = this.nextElementSibling; // Get the next sibling element (the review form)
                 reviewForm.style.display = reviewForm.style.display === 'none' ? 'block' : 'none'; // Toggle display
             });
+        });
+    
+        document.getElementById('view-reviews-btn').addEventListener('click', function() {
+            document.getElementById('review-modal').style.display = 'block';
+            fetch('/get_user_reviews')
+            .then(response => response.json())
+            .then(data => {
+                const reviewList = document.getElementById('review-list');
+                reviewList.innerHTML = '';
+                data.forEach(review => {
+                    const reviewDiv = document.createElement('div');
+                    reviewDiv.classList.add('review-item');
+                    reviewDiv.innerHTML = `<p>${review.rating} stars</p><p>${review.comment}</p>`;
+                    reviewList.appendChild(reviewDiv);
+                });
+            })
+            .catch(error => console.error('Error fetching reviews:', error));
+        });
+        
+        document.getElementsByClassName('close')[0].addEventListener('click', function() {
+            document.getElementById('review-modal').style.display = 'none';
         });
     </script>
 
