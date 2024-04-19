@@ -868,3 +868,68 @@ def view_services(request):
 def service_details(request,service_id): 
     service = get_object_or_404(AddService, service_id=service_id)
     return render(request, "service_details.html")
+
+from .models import Blog, Image, Video, BlogView
+from .forms import BlogForm
+from django.shortcuts import render, redirect
+
+def add_blog(request):
+    if request.method == 'POST':
+        form = BlogForm(request.POST, request.FILES)
+        if form.is_valid():
+            blog = form.save(commit=False)
+            blog.author = request.user
+            blog.save()
+
+            # Handle image and video uploads
+            for image in request.FILES.getlist('images'):
+                blog_image = Image.objects.create(image=image)
+                blog.images.add(blog_image)
+            for video in request.FILES.getlist('videos'):
+                blog_video = Video.objects.create(video=video)
+                blog.videos.add(blog_video)
+
+            return redirect('blog_page')
+    else:
+        form = BlogForm()
+    return render(request, 'add_blog.html', {'form': form})
+
+def blog_page(request):
+    blogs = Blog.objects.all()
+    return render(request, 'blog_page.html', {'blogs': blogs})
+def view_my_blogs(request):
+    # Get the current logged-in user
+    user = request.user
+    # Fetch blogs added by the current user
+    user_blogs = Blog.objects.filter(author=user)
+    return render(request, 'view_my_blogs.html', {'user_blogs': user_blogs})
+
+def blog_detail(request, blog_id):
+    blog = get_object_or_404(Blog, pk=blog_id)
+    
+    # Check if the user is authenticated
+    if request.user.is_authenticated:
+        user = request.user
+        
+        # Check if the user has already viewed the blog
+        if not BlogView.objects.filter(user=user, blog=blog).exists():
+            # If the user hasn't viewed the blog, increment the views
+            blog.views += 1
+            blog.save()
+            # Record the view in the BlogView table
+            BlogView.objects.create(user=user, blog=blog)
+    
+    return render(request, 'blog_detail.html', {'blog': blog})
+def delete_blog(request, blog_id):
+    blog = get_object_or_404(Blog, pk=blog_id)
+    if request.method == 'POST':
+        blog.delete()
+        return redirect('view_my_blogs')  # Redirect to view_my_blogs after deletion
+    else:
+        return redirect('view_my_blogs')  # Redirect to view_my_blogs if method is not POST
+    
+def like_blog(request, blog_id):
+    blog = get_object_or_404(Blog, pk=blog_id)
+    blog.likes += 1
+    blog.save()
+    return redirect('blog_detail', blog_id=blog_id)
